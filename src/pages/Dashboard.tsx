@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { fetchPosts } from "@/services/post.service";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -74,7 +75,12 @@ export default function Dashboard() {
             )}
             {/* h-full para altura igual */}
             <div className="flex flex-col h-full">
+              <Link key={post.id}
+              to={`/posts/${post.id}`}
+              
+              >
               <h2 className="text-lg font-semibold">{post.title}</h2>
+              </Link>
 
               {/* corpo flexível que ocupa espaço e aplica ellipsis */}
               <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1 overflow-hidden">

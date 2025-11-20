@@ -8,6 +8,7 @@ import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Layout from "@/components/Layout";
 import "./index.css";
+import PostDetail from "./pages/PostDetail";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -29,6 +30,14 @@ createRoot(document.getElementById("root")!).render(
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/posts/:id"
+              element={
+                <ProtectedRoute>
+                  <PostDetail />
+                </ProtectedRoute>
+              }
+            ></Route>
           </Routes>
         </BrowserRouter>
       </ToastProvider>
