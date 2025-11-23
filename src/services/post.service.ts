@@ -8,3 +8,7 @@ export async function fetchPosts() {
 export async function fetchPostById(id:string) {
     return api.get<ApiResponse<Post>>(`/posts/${id}`)    
 }
+
+export async function deletePost(id: string) {
+    return api.delete<ApiResponse<void>>(`/posts/${id}`)
+}

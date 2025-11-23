@@ -2,8 +2,10 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { fetchPostById } from "@/services/post.service";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Post } from "@/types";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
+import { getYouTubeEmbedUrl } from "@/lib/normalizeVideoUrl";
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -73,6 +75,16 @@ export default function PostDetail() {
     );
   }
 
+  const videoUrl = (post as any).videoUrl;
+  console.log("videoUrl original:", videoUrl);
+
+  const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
+  console.log("embedUrl convertida:", embedUrl);
+
+    // Determinar qual data mostrar
+  const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
+  const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
+
   return (
     <div className="min-h-screen bg-background p-8">
       <Link
@@ -101,15 +113,44 @@ export default function PostDetail() {
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
             <span>{post.author ?? "Autor desconhecido"}</span>
             <span>•</span>
-            <time dateTime={post.createdAt}>
-              {post.createdAt
-                ? new Date(post.createdAt).toLocaleDateString("pt-BR", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })
-                : ""}
-            </time>
+
+            {wasUpdated ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center gap-1.5 cursor-help group">
+                    <time dateTime={displayDate}>
+                      atualizado em{" "}
+                      {new Date(displayDate!).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </time>
+                    <Info className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">
+                    Publicado em{" "}
+                    {new Date(post.createdAt!).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <time dateTime={displayDate}>
+                {displayDate
+                  ? new Date(displayDate).toLocaleDateString("pt-BR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : ""}
+              </time>
+            )}
           </div>
 
           <div className="prose prose-slate max-w-none">
@@ -118,17 +159,16 @@ export default function PostDetail() {
             </p>
           </div>
 
-          {post.videoUrl && (
+          {embedUrl && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold mb-4">Vídeo complementar</h2>
               <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
                 <iframe
-                  src={post.videoUrl}
+                  src={embedUrl}
                   title="Vídeo do post"
                   className="w-full h-full"
                   loading="lazy"
                   allowFullScreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 />
               </div>
             </div>
