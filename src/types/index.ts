@@ -17,21 +17,32 @@ export interface ApiResponse<T> {
 }
 
 // Resposta do login: { status, message, data: { token } }
-export interface LoginResponse {
+export type LoginResponse = {
   status: string;
-  message?: string;
+  message: string;
   data: {
     token: string;
   };
-}
+};
+
+export type Session = {
+  token: string;
+};
 
 export interface Post {
   id: string;
   title: string;
   content: string;
   author: string;
+  authorId: string;
   imageUrl?: string;
   videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type LoginPayload = {
+  email?: string;
+  username?: string;
+  password: string;
+};

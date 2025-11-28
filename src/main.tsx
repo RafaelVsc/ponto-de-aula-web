@@ -34,7 +34,9 @@ createRoot(document.getElementById("root")!).render(
               path="/posts/:id"
               element={
                 <ProtectedRoute>
-                  <PostDetail />
+                  <Layout>
+                    <PostDetail />
+                  </Layout>
                 </ProtectedRoute>
               }
             ></Route>

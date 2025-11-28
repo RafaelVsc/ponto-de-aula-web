@@ -19,7 +19,7 @@ export function getYouTubeEmbedUrl(url: string): string | null {
   try {
     const videoUrl = new URL(url.trim());
     if (videoUrl.pathname.startsWith("/embed/")) {
-      return `https:www.youtube-nocookie.com${videoUrl.pathname}`;
+      return `https://www.youtube-nocookie.com${videoUrl.pathname}`;
     }
 
     let videoId: string | null = null;

@@ -1,14 +1,14 @@
-import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { SquarePlay } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { fetchPosts } from "@/services/post.service";
+import type { Post } from "@/types";
+import { SquarePlay } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {

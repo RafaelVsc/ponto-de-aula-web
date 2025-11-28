@@ -75,7 +75,7 @@ export default function PostDetail() {
     );
   }
 
-  const videoUrl = (post as any).videoUrl;
+  const videoUrl = post.videoUrl;
   console.log("videoUrl original:", videoUrl);
 
   const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;

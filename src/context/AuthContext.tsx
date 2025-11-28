@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { api } from "@/lib/api";
-import type { ApiResponse, LoginResponse, User } from "@/types";
+import { clearToken, getToken, login as loginService } from "@/services/auth.service";
+import type { ApiResponse, User } from "@/types";
 
 type AuthContextValue = {
   user: User | null;
@@ -20,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Carrega perfil se houver token ao montar
   useEffect(() => {
     let mounted = true;
-    const token = localStorage.getItem("pda:token");
+    const token = getToken();
 
     if (!token) {
       setIsInitializing(false);
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(profile.data);
       } catch (err) {
         console.error("Erro ao carregar perfil:", err);
-        localStorage.removeItem("pda:token");
+        clearToken();
       } finally {
         if (mounted) setIsInitializing(false);
       }
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleLogout = () => {
       setUser(null);
+      clearToken();
       window.location.href = "/";
     };
     window.addEventListener("auth:logout", handleLogout);
@@ -62,13 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const payload = identifier.includes("@")
         ? { email: identifier, password }
         : { username: identifier, password };
-      
-      const loginResp = await api.post<LoginResponse>("/auth/login", payload);
-      const token = loginResp.data.token;
 
-      if(!token) throw new Error("Token não recebido do servidor");
-
-      localStorage.setItem("pda:token", token);
+      const token = await loginService(payload);
+      if (!token) throw new Error("Token não recebido do servidor");
 
       const profile = await api.get<ApiResponse<User>>("/users/me");
       setUser(profile.data);

@@ -114,13 +114,13 @@ export default function Login() {
           </p>
           <div className="space-y-1 text-xs text-muted-foreground">
             <p>
-              <strong>Admin:</strong> admin@pontodeaula.com / Admin@2024
+              <strong>Admin:</strong> admin@pontodeaula.com / admin@2025 - 12345678
             </p>
             <p>
-              <strong>Professor:</strong> teacher@pontodeaula.com / Teacher@2024
+              <strong>Professor:</strong> teacher@pontodeaula.com / teacher@2025 - 12345678
             </p>
             <p>
-              <strong>Aluno:</strong> student@pontodeaula.com / Student@2024
+              <strong>Aluno:</strong> student@pontodeaula.com / student@2025 - 12345678
             </p>
           </div>
         </div>
