@@ -1,13 +1,32 @@
 import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
-import { fetchPostById } from '@/services/post.service';
+import { deletePostById, fetchPostById } from '@/services/post.service';
 import type { Post } from '@/types';
 import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { useCan } from '@/hooks/useCan';
 
 export default function PostDetail() {
+  const { user } = useAuth();
+  const can = useCan();
+  // const canDelete = can('delete', 'Post', post);
+
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
@@ -78,6 +97,20 @@ export default function PostDetail() {
   // Determinar qual data mostrar
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
+
+  async function handleDelete() {
+    if (!post) return;
+    try {
+      await deletePostById(post.id);
+      navigate('/');
+    } catch (error: unknown) {
+      let message = 'Erro desconhecido';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      alert('Erro ao deletar post: ' + message);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -164,6 +197,28 @@ export default function PostDetail() {
                 />
               </div>
             </div>
+          )}
+
+          {post && can('delete', 'Post', post) && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="mt-8 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                  Deletar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
       </Card>

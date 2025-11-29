@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { fetchPosts } from '@/services/post.service';
 import type { Post } from '@/types';
 import { SquarePlay } from 'lucide-react';

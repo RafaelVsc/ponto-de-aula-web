@@ -11,6 +11,6 @@ export async function fetchPostById(id: string) {
   return response;
 }
 
-export async function deletePost(id: string) {
+export async function deletePostById(id: string) {
   return api.delete<ApiResponse<void>>(`/posts/${id}`);
 }
