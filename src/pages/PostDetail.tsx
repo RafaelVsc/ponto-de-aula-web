@@ -1,11 +1,11 @@
-import { useParams, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { fetchPostById } from '@/services/post.service';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
+import { fetchPostById } from '@/services/post.service';
 import type { Post } from '@/types';
 import { ArrowLeft, Info } from 'lucide-react';
-import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
