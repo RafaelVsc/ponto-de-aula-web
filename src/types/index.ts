@@ -35,6 +35,7 @@ export interface Post {
   content: string;
   author: string;
   authorId: string;
+  tags?: string[];
   imageUrl?: string;
   videoUrl?: string;
   createdAt?: string;
@@ -45,4 +46,20 @@ export type LoginPayload = {
   email?: string;
   username?: string;
   password: string;
+};
+
+export type CreatePostPayload = {
+  title: string;
+  content: string;
+  tags?: string[];
+  imageUrl?: string;
+  videoUrl?: string;
+};
+
+export type UpdatePostPayload = {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  imageUrl?: string;
+  videoUrl?: string;
 };
