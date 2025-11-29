@@ -1,11 +1,11 @@
-import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { fetchPostById } from "@/services/post.service";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { Post } from "@/types";
-import { ArrowLeft, Info } from "lucide-react";
-import { getYouTubeEmbedUrl } from "@/lib/normalizeVideoUrl";
+import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { fetchPostById } from '@/services/post.service';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import type { Post } from '@/types';
+import { ArrowLeft, Info } from 'lucide-react';
+import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +27,7 @@ export default function PostDetail() {
         setPost(resp.data ?? null);
       } catch (err: any) {
         if (!mounted) return;
-        setError(err?.message ?? "Erro ao carregar post");
+        setError(err?.message ?? 'Erro ao carregar post');
       } finally {
         if (mounted) setLoading(false);
       }
@@ -51,10 +51,7 @@ export default function PostDetail() {
     return (
       <div className="min-h-screen bg-background p-8">
         <p className="text-sm text-red-500">Erro: {error}</p>
-        <Link
-          to="/"
-          className="text-sm text-primary hover:underline mt-4 inline-block"
-        >
+        <Link to="/" className="text-sm text-primary hover:underline mt-4 inline-block">
           ← Voltar para o início
         </Link>
       </div>
@@ -65,10 +62,7 @@ export default function PostDetail() {
     return (
       <div className="min-h-screen bg-background p-8">
         <p className="text-sm text-muted-foreground">Post não encontrado.</p>
-        <Link
-          to="/"
-          className="text-sm text-primary hover:underline mt-4 inline-block"
-        >
+        <Link to="/" className="text-sm text-primary hover:underline mt-4 inline-block">
           ← Voltar para o início
         </Link>
       </div>
@@ -76,12 +70,12 @@ export default function PostDetail() {
   }
 
   const videoUrl = post.videoUrl;
-  console.log("videoUrl original:", videoUrl);
+  console.log('videoUrl original:', videoUrl);
 
   const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
-  console.log("embedUrl convertida:", embedUrl);
+  console.log('embedUrl convertida:', embedUrl);
 
-    // Determinar qual data mostrar
+  // Determinar qual data mostrar
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
 
@@ -100,7 +94,7 @@ export default function PostDetail() {
           <div className="w-full h-64 md:h-96 bg-gray-100">
             <img
               src={post.imageUrl}
-              alt={post.title ?? "Imagem do post"}
+              alt={post.title ?? 'Imagem do post'}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -111,7 +105,7 @@ export default function PostDetail() {
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
 
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
-            <span>{post.author ?? "Autor desconhecido"}</span>
+            <span>{post.author ?? 'Autor desconhecido'}</span>
             <span>•</span>
 
             {wasUpdated ? (
@@ -119,11 +113,11 @@ export default function PostDetail() {
                 <TooltipTrigger asChild>
                   <span className="inline-flex items-center gap-1.5 cursor-help group">
                     <time dateTime={displayDate}>
-                      atualizado em{" "}
-                      {new Date(displayDate!).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
+                      atualizado em{' '}
+                      {new Date(displayDate!).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
                       })}
                     </time>
                     <Info className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
@@ -131,11 +125,11 @@ export default function PostDetail() {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="text-xs">
-                    Publicado em{" "}
-                    {new Date(post.createdAt!).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
+                    Publicado em{' '}
+                    {new Date(post.createdAt!).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
                     })}
                   </p>
                 </TooltipContent>
@@ -143,20 +137,18 @@ export default function PostDetail() {
             ) : (
               <time dateTime={displayDate}>
                 {displayDate
-                  ? new Date(displayDate).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
+                  ? new Date(displayDate).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
                     })
-                  : ""}
+                  : ''}
               </time>
             )}
           </div>
 
           <div className="prose prose-slate max-w-none">
-            <p className="text-base leading-relaxed whitespace-pre-wrap">
-              {post.content}
-            </p>
+            <p className="text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
           </div>
 
           {embedUrl && (

@@ -1,4 +1,4 @@
-import { ToastProvider, useToast } from "@/components/ui/ToastProvider";
+import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
 
 function TestToastButtons() {
   const { toast } = useToast();
@@ -7,12 +7,12 @@ function TestToastButtons() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="space-y-4 p-8 rounded-lg border bg-card">
         <h1 className="text-2xl font-bold mb-4">Teste de Toasts</h1>
-        
+
         <button
           onClick={() =>
             toast({
-              title: "Sucesso!",
-              description: "Operação concluída com sucesso",
+              title: 'Sucesso!',
+              description: 'Operação concluída com sucesso',
             })
           }
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
@@ -23,9 +23,9 @@ function TestToastButtons() {
         <button
           onClick={() =>
             toast({
-              title: "Erro!",
-              description: "Algo deu errado na operação",
-              variant: "destructive",
+              title: 'Erro!',
+              description: 'Algo deu errado na operação',
+              variant: 'destructive',
             })
           }
           className="w-full px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90"
@@ -36,7 +36,7 @@ function TestToastButtons() {
         <button
           onClick={() =>
             toast({
-              title: "Apenas título",
+              title: 'Apenas título',
             })
           }
           className="w-full px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90"

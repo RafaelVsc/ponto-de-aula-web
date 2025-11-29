@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
-import type { Role } from "@/types";
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
+import type { Role } from '@/types';
 
 type NavItem = {
   to: string;
@@ -10,11 +10,11 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/users", label: "Usuários", roles: ["ADMIN", "SECRETARY"] },
-  { to: "/classes", label: "Turmas", roles: ["ADMIN", "TEACHER"] },
-  { to: "/schedule", label: "Meu Horário", roles: ["TEACHER", "STUDENT"] },
-  { to: "/reports", label: "Relatórios", roles: ["ADMIN"] },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
+  { to: '/classes', label: 'Turmas', roles: ['ADMIN', 'TEACHER'] },
+  { to: '/schedule', label: 'Meu Horário', roles: ['TEACHER', 'STUDENT'] },
+  { to: '/reports', label: 'Relatórios', roles: ['ADMIN'] },
 ];
 
 export function Header() {
@@ -43,7 +43,7 @@ export function Header() {
 
         <nav className="flex-1 px-6">
           <ul className="flex items-center gap-2">
-            {NAV_ITEMS.filter(isVisible).map((item) => (
+            {NAV_ITEMS.filter(isVisible).map(item => (
               <li key={item.to}>
                 <Link to={item.to} className="text-sm text-muted-foreground hover:text-primary">
                   {item.label}

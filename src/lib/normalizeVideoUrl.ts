@@ -14,28 +14,28 @@
  */
 
 export function getYouTubeEmbedUrl(url: string): string | null {
-  if (!url || typeof url !== "string") return null;
+  if (!url || typeof url !== 'string') return null;
 
   try {
     const videoUrl = new URL(url.trim());
-    if (videoUrl.pathname.startsWith("/embed/")) {
+    if (videoUrl.pathname.startsWith('/embed/')) {
       return `https://www.youtube-nocookie.com${videoUrl.pathname}`;
     }
 
     let videoId: string | null = null;
     // watch?v=ID
-    if (videoUrl.searchParams.has("v")) {
-      videoId = videoUrl.searchParams.get("v");
+    if (videoUrl.searchParams.has('v')) {
+      videoId = videoUrl.searchParams.get('v');
     }
 
     // youtu.be/ID
-    if (!videoId && videoUrl.hostname === "youtu.be") {
-      videoId = videoUrl.pathname.replace("/", "");
+    if (!videoId && videoUrl.hostname === 'youtu.be') {
+      videoId = videoUrl.pathname.replace('/', '');
     }
 
     // youtube.com/shorts/ID
-    if (!videoId && videoUrl.pathname.startsWith("/shorts/")) {
-      videoId = videoUrl.pathname.replace("/shorts/", "").split("/")[0];
+    if (!videoId && videoUrl.pathname.startsWith('/shorts/')) {
+      videoId = videoUrl.pathname.replace('/shorts/', '').split('/')[0];
     }
 
     if (!videoId) return null;
