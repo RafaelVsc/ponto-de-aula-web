@@ -43,7 +43,7 @@ export default function MyPosts() {
   }, []);
 
   const handleEdit = (post: Post) => {
-    navigate(`/posts/${post.id}/edit`);
+    navigate(`/posts/edit/${post.id}`);
   };
 
   const handleDeleteConfirm = async () => {

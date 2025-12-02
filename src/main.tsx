@@ -8,8 +8,10 @@ import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import Layout from '@/components/Layout';
 import MyPosts from '@/pages/MyPosts';
-import './index.css';
+import CreatePost from '@/pages/CreatePost';
+import EditPost from '@/pages/EditPost';
 import PostDetail from './pages/PostDetail';
+import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -20,7 +22,7 @@ createRoot(document.getElementById('root')!).render(
             {/* Rota pública */}
             <Route path="/" element={<Login />} />
 
-            {/* Rota protegida */}
+            {/* Rotas protegidas */}
             <Route
               path="/dashboard"
               element={
@@ -40,7 +42,7 @@ createRoot(document.getElementById('root')!).render(
                   </Layout>
                 </ProtectedRoute>
               }
-            ></Route>
+            />
             <Route
               path="/posts/mine"
               element={
@@ -50,8 +52,8 @@ createRoot(document.getElementById('root')!).render(
                   </Layout>
                 </ProtectedRoute>
               }
-            ></Route>
-            {/* <Route
+            />
+            <Route
               path="/posts/new"
               element={
                 <ProtectedRoute>
@@ -60,7 +62,17 @@ createRoot(document.getElementById('root')!).render(
                   </Layout>
                 </ProtectedRoute>
               }
-            /> */}
+            />
+            <Route
+              path="/posts/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <EditPost />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </ToastProvider>

@@ -13,8 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
   { to: '/posts/mine', label: 'Meus Posts', roles: ['ADMIN', 'TEACHER', 'SECRETARY'] },
-  { to: '/schedule', label: 'Meu Horário', roles: ['TEACHER', 'STUDENT'] },
-  { to: '/reports', label: 'Relatórios', roles: ['ADMIN'] },
+  { to: '/schedule', label: 'Meus Dados', roles: ['ADMIN', 'SECRETARY', 'TEACHER', 'STUDENT'] },
 ];
 
 export function Header() {

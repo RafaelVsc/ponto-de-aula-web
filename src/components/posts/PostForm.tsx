@@ -1,0 +1,164 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Save } from 'lucide-react';
+
+const postSchema = z.object({
+  title: z.string().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
+  content: z.string().min(1, 'Conteúdo é obrigatório'),
+  imageUrl: z.string().url('URL inválida').optional().or(z.literal('')),
+  videoUrl: z.string().url('URL inválida').optional().or(z.literal('')),
+  tags: z.string().optional(),
+});
+
+export type PostFormData = z.infer<typeof postSchema>;
+
+interface PostFormProps {
+  defaultValues?: Partial<PostFormData>;
+  onSubmit: (data: PostFormData) => Promise<void>;
+  isLoading?: boolean;
+  submitLabel?: string;
+  onCancel?: () => void;
+}
+
+export function PostForm({
+  defaultValues,
+  onSubmit,
+  isLoading = false,
+  submitLabel = 'Salvar Post',
+  onCancel,
+}: PostFormProps) {
+  const form = useForm<PostFormData>({
+    resolver: zodResolver(postSchema),
+    defaultValues: {
+      title: '',
+      content: '',
+      imageUrl: '',
+      videoUrl: '',
+      tags: '',
+      ...defaultValues,
+    },
+  });
+
+  const handleSubmit = async (data: PostFormData) => {
+    await onSubmit(data);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Título *</FormLabel>
+              <FormControl>
+                <Input placeholder="Digite o título do post" {...field} disabled={isLoading} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Conteúdo *</FormLabel>
+              <FormControl>
+
+                <textarea
+                  className="w-full min-h-[200px] p-3 border rounded-md resize-y"
+                  placeholder="Escreva o conteúdo do seu post..."
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>URL da Imagem</FormLabel>
+              <FormControl>
+                <Input
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="videoUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>URL do Vídeo (YouTube)</FormLabel>
+              <FormControl>
+                <Input
+                  type="url"
+                  placeholder="https://youtube.com/watch?v=..."
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags (separadas por vírgula)</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="react, javascript, tutorial"
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-3 pt-4">
+          <Button type="submit" disabled={isLoading} className="flex-1">
+            <Save className="w-4 h-4 mr-2" />
+            {isLoading ? 'Salvando...' : submitLabel}
+          </Button>
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+              Cancelar
+            </Button>
+          )}
+        </div>
+      </form>
+    </Form>
+  );
+}
