@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import Layout from '@/components/Layout';
+import MyPosts from '@/pages/MyPosts';
 import './index.css';
 import PostDetail from './pages/PostDetail';
 
@@ -40,6 +41,26 @@ createRoot(document.getElementById('root')!).render(
                 </ProtectedRoute>
               }
             ></Route>
+            <Route
+              path="/posts/mine"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <MyPosts />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            ></Route>
+            {/* <Route
+              path="/posts/new"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <CreatePost />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            /> */}
           </Routes>
         </BrowserRouter>
       </ToastProvider>

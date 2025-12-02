@@ -12,7 +12,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
-  { to: '/classes', label: 'Turmas', roles: ['ADMIN', 'TEACHER'] },
+  { to: '/posts/mine', label: 'Meus Posts', roles: ['ADMIN', 'TEACHER', 'SECRETARY'] },
   { to: '/schedule', label: 'Meu Horário', roles: ['TEACHER', 'STUDENT'] },
   { to: '/reports', label: 'Relatórios', roles: ['ADMIN'] },
 ];
