@@ -28,7 +28,15 @@ export const policies: Record<Role, Policy> = {
     static: {},
   },
   TEACHER: {
-    static: {},
+    static: {
+      Post: ['create', 'read'],
+    },
+    dynamic: {
+      Post: {
+        update: isOwner,
+        delete: isOwner,
+      },
+    },
   },
   STUDENT: {
     static: {},

@@ -199,27 +199,39 @@ export default function PostDetail() {
             </div>
           )}
 
-          {post && can('delete', 'Post', post) && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="mt-8 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                  Deletar
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
+          {/* Botões de ação para quem pode editar/deletar */}
+          <div className="flex gap-4 mt-8">
+            {can && can('update', 'Post', post) && (
+              <Button
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                onClick={() => navigate(`/posts/edit/${post.id}`)}
+              >
+                Editar
+              </Button>
+            )}
+
+            {can && can('delete', 'Post', post) && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                    Deletar
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         </div>
       </Card>
     </div>

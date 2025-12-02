@@ -11,7 +11,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Save } from 'lucide-react';
+import { Save, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const postSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
@@ -78,7 +79,6 @@ export function PostForm({
             <FormItem>
               <FormLabel>Conteúdo *</FormLabel>
               <FormControl>
-
                 <textarea
                   className="w-full min-h-[200px] p-3 border rounded-md resize-y"
                   placeholder="Escreva o conteúdo do seu post..."
@@ -115,7 +115,21 @@ export function PostForm({
           name="videoUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL do Vídeo (YouTube)</FormLabel>
+              <FormLabel>
+                URL do Vídeo (YouTube)
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-3.5 h-3.5 cursor-help opacity-50 group-hover:opacity-100 transition-opacity" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>
+                      Dica: Use o link completo do YouTube, por exemplo:
+                      <br />
+                      <code>https://youtube.com/watch?v=...</code>
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
+              </FormLabel>
               <FormControl>
                 <Input
                   type="url"
@@ -136,11 +150,7 @@ export function PostForm({
             <FormItem>
               <FormLabel>Tags (separadas por vírgula)</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="react, javascript, tutorial"
-                  {...field}
-                  disabled={isLoading}
-                />
+                <Input placeholder="react, javascript, tutorial" {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -48,8 +48,8 @@ export default function EditPost() {
         title: data.title,
         content: data.content,
         tags: data.tags ? data.tags.split(',').map(t => t.trim()) : undefined,
-        imageUrl: data.imageUrl || undefined,
-        videoUrl: data.videoUrl || undefined,
+        imageUrl: data.imageUrl?.trim() || '',
+        videoUrl: data.videoUrl?.trim() || '',
       };
 
       await updatePostById(id, payload);
