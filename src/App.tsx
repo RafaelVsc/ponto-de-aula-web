@@ -1,58 +1,79 @@
-import { ToastProvider, useToast } from '@/components/ui/ToastProvider';
-
-function TestToastButtons() {
-  const { toast } = useToast();
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="space-y-4 p-8 rounded-lg border bg-card">
-        <h1 className="text-2xl font-bold mb-4">Teste de Toasts</h1>
-
-        <button
-          onClick={() =>
-            toast({
-              title: 'Sucesso!',
-              description: 'Operação concluída com sucesso',
-            })
-          }
-          className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-        >
-          Toast Normal
-        </button>
-
-        <button
-          onClick={() =>
-            toast({
-              title: 'Erro!',
-              description: 'Algo deu errado na operação',
-              variant: 'destructive',
-            })
-          }
-          className="w-full px-4 py-2 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90"
-        >
-          Toast de Erro
-        </button>
-
-        <button
-          onClick={() =>
-            toast({
-              title: 'Apenas título',
-            })
-          }
-          className="w-full px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90"
-        >
-          Toast Simples
-        </button>
-      </div>
-    </div>
-  );
-}
+import Layout from '@/components/Layout';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ToastProvider } from '@/components/ui/ToastProvider';
+import { AuthProvider } from '@/context/AuthProvider';
+import CreatePost from '@/pages/CreatePost';
+import Dashboard from '@/pages/Dashboard';
+import EditPost from '@/pages/EditPost';
+import Login from '@/pages/Login';
+import MyPosts from '@/pages/MyPosts';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import PostDetail from './pages/PostDetail';
 
 function App() {
   return (
-    <ToastProvider>
-      <TestToastButtons />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Rota pública */}
+            <Route path="/" element={<Login />} />
+
+            {/* Rotas protegidas */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PostDetail />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/mine"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <MyPosts />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/new"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <CreatePost />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <EditPost />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 
