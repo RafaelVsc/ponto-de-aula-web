@@ -47,9 +47,15 @@ export default function EditPost() {
       const payload = {
         title: data.title,
         content: data.content,
-        tags: data.tags ? data.tags.split(',').map(t => t.trim()) : undefined,
+        // tags: data.tags ? data.tags.split(',').map(t => t.trim()) : undefined,
         imageUrl: data.imageUrl?.trim() || '',
         videoUrl: data.videoUrl?.trim() || '',
+        tags: data.tags?.trim()
+          ? data.tags
+              .split(',')
+              .map(t => t.trim())
+              .filter(t => t.length > 0)
+          : [],
       };
 
       await updatePostById(id, payload);

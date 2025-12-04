@@ -19,6 +19,7 @@ import type { Post } from '@/types';
 import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import defaultPostImage from '@/assets/login-bg.png';
 
 export default function PostDetail() {
   const can = useCan();
@@ -120,20 +121,31 @@ export default function PostDetail() {
       </Link>
 
       <Card className="p-0 overflow-hidden max-w-4xl mx-auto">
-        {post.imageUrl && (
-          <div className="w-full h-64 md:h-96 bg-gray-100">
-            <img
-              src={post.imageUrl}
-              alt={post.title ?? 'Imagem do post'}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        )}
+        <div className="w-full h-64 md:h-96 bg-gray-100">
+          <img
+            src={post.imageUrl || defaultPostImage}
+            alt={post.title ?? 'Imagem do post'}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+        {/* {post.imageUrl && (
+        )} */}
 
         <div className="p-6 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
-
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
             <span>{post.author ?? 'Autor desconhecido'}</span>
             <span>•</span>
@@ -176,11 +188,9 @@ export default function PostDetail() {
               </time>
             )}
           </div>
-
           <div className="prose prose-slate max-w-none">
             <p className="text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
           </div>
-
           {embedUrl && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold mb-4">Vídeo complementar</h2>
@@ -195,7 +205,6 @@ export default function PostDetail() {
               </div>
             </div>
           )}
-
           {/* Botões de ação para quem pode editar/deletar */}
           <div className="flex gap-4 mt-8">
             {can && can('update', 'Post', post) && (

@@ -5,6 +5,7 @@ import { SquarePlay, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useCan } from '@/hooks/useCan';
+import defaultPostImage from '@/assets/login-bg.png';
 
 interface PostCardProps {
   post: Post;
@@ -19,20 +20,20 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
   return (
     <Card className="p-4 h-full">
       {/* Imagem */}
-      {post.imageUrl ? (
-        <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-100 rounded-md overflow-hidden">
-          <img
-            src={post.imageUrl}
-            alt={post.title ?? 'Imagem do post'}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      ) : (
-        <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-50 flex items-center justify-center text-sm text-muted-foreground rounded-md">
-          Sem imagem
-        </div>
-      )}
+      <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-100 rounded-md overflow-hidden">
+        <img
+          src={post.imageUrl || defaultPostImage}
+          alt={post.title ?? 'Imagem do post'}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={e => {
+            // Se a URL customizada falhar, usa a imagem padrão
+            e.currentTarget.src = defaultPostImage;
+          }}
+        />
+      </div>
+      {/* {post.imageUrl ? (
+      ) : null} */}
 
       <div className="flex flex-col h-full mt-3">
         {/* Título */}
@@ -70,6 +71,19 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
               )}
             </div>
           </div>
+          {/* Tags */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Ações (se habilitadas) */}
           {showActions && (

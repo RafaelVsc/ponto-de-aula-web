@@ -17,8 +17,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 const postSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
   content: z.string().min(1, 'Conteúdo é obrigatório'),
-  imageUrl: z.string().url('URL inválida').optional().or(z.literal('')),
-  videoUrl: z.string().url('URL inválida').optional().or(z.literal('')),
+  imageUrl: z.url('URL inválida').optional().or(z.literal('')),
+  videoUrl: z.url('URL inválida').optional().or(z.literal('')),
   tags: z.string().optional(),
 });
 
