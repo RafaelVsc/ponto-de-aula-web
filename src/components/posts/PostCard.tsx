@@ -19,10 +19,10 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
   return (
     <Card className="p-4 h-full">
       {/* Imagem */}
-      {(post as any).imageUrl ? (
+      {post.imageUrl ? (
         <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-100 rounded-md overflow-hidden">
           <img
-            src={(post as any).imageUrl}
+            src={post.imageUrl}
             alt={post.title ?? 'Imagem do post'}
             className="w-full h-full object-cover"
             loading="lazy"
@@ -49,14 +49,14 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
         <div className="mt-4 flex flex-col gap-2">
           <div className="flex justify-between items-start text-xs text-muted-foreground">
             <div className="space-y-1">
-              <span>Por: {(post as any).author ?? 'Autor desconhecido'}</span>
+              <span>Por: {post.author ?? 'Autor desconhecido'}</span>
               <br />
               <span>{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ''}</span>
             </div>
 
             {/* Ícone de vídeo */}
             <div>
-              {(post as any).videoUrl ? (
+              {post.videoUrl ? (
                 <Tooltip>
                   <TooltipTrigger>
                     <SquarePlay className="w-5 h-5" color="#dc2626" strokeWidth={2} />

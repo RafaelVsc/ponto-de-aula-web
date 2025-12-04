@@ -3,7 +3,7 @@ import type { Role, User, Post } from '@/types';
 export type Action = 'create' | 'read' | 'update' | 'delete' | 'manage';
 export type Subject = 'Post' | 'User' | 'all';
 
-type DynamicRule = (user: User, subject: any) => boolean;
+type DynamicRule = (user: User, subject: Partial<Post>) => boolean;
 
 type Policy = {
   static: Partial<Record<Subject, Action[]>>;
@@ -25,7 +25,15 @@ export const policies: Record<Role, Policy> = {
     },
   },
   SECRETARY: {
-    static: {},
+    static: {
+      Post: ['create', 'read'],
+    },
+    dynamic: {
+      Post: {
+        update: isOwner,
+        delete: isOwner,
+      },
+    },
   },
   TEACHER: {
     static: {
@@ -39,6 +47,8 @@ export const policies: Record<Role, Policy> = {
     },
   },
   STUDENT: {
-    static: {},
+    static: {
+      Post: ['read'],
+    },
   },
 };

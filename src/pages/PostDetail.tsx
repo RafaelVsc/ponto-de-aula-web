@@ -1,30 +1,27 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useCan } from '@/hooks/useCan';
 import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
 import { deletePostById, fetchPostById } from '@/services/post.service';
 import type { Post } from '@/types';
 import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { useCan } from '@/hooks/useCan';
 
 export default function PostDetail() {
-  const { user } = useAuth();
   const can = useCan();
-  // const canDelete = can('delete', 'Post', post);
 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
