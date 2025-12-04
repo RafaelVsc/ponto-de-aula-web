@@ -9,71 +9,74 @@ import Login from '@/pages/Login';
 import MyPosts from '@/pages/MyPosts';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PostDetail from './pages/PostDetail';
+import { ThemeProvider } from './components/theme-provider';
 
 function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Rota pública */}
-            <Route path="/" element={<Login />} />
+    <ThemeProvider defaultTheme="system" storageKey="pda-theme">
+      <AuthProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Rota pública */}
+              <Route path="/" element={<Login />} />
 
-            {/* Rotas protegidas */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/:id"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <PostDetail />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/mine"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <MyPosts />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/new"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <CreatePost />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/edit/:id"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <EditPost />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
-    </AuthProvider>
+              {/* Rotas protegidas */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/posts/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <PostDetail />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/posts/mine"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <MyPosts />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/posts/new"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <CreatePost />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/posts/edit/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <EditPost />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

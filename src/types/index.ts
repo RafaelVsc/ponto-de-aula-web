@@ -48,6 +48,18 @@ export type LoginPayload = {
   password: string;
 };
 
+export type PostSearchParams = {
+  search?: string;
+  title?: string;
+  tag?: string;
+  authorId?: string;
+  authorName?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: 'createdAt' | 'title';
+  sortOrder?: 'asc' | 'desc';
+};
+
 export type CreatePostPayload = {
   title: string;
   content: string;

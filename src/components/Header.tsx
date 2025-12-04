@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types';
+import { ModeToggle } from './mode-toggle';
 
 type NavItem = {
   to: string;
@@ -60,6 +61,7 @@ export function Header() {
           <Button variant="outline" size="sm" onClick={logout}>
             Sair
           </Button>
+          <ModeToggle></ModeToggle>
         </div>
       </div>
     </header>
