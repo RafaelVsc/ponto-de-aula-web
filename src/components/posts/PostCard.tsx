@@ -16,6 +16,9 @@ interface PostCardProps {
 
 export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCardProps) {
   const can = useCan();
+  const MAX_TAGS = 4;
+  const visibleTags = post.tags?.slice(0, MAX_TAGS) ?? [];
+  const extraTags = (post.tags?.length ?? 0) - visibleTags.length;
 
   return (
     <Card className="p-4 h-full">
@@ -72,7 +75,7 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
             </div>
           </div>
           {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
+          {/* {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag, index) => (
                 <span
@@ -82,6 +85,24 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
                   {tag}
                 </span>
               ))}
+            </div>
+          )} */}
+
+          {visibleTags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {visibleTags.map(tag => (
+                <span
+                  key={tag}
+                  className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+              {extraTags > 0 && (
+                <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">
+                  +{extraTags}
+                </span>
+              )}
             </div>
           )}
 

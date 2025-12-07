@@ -58,10 +58,10 @@ export function Header() {
             <span className="text-sm">Olá, {user?.name}</span>
             {/* <small className="text-xs text-muted-foreground">{user?.role}</small> */}
           </div>
+          <ModeToggle />
           <Button variant="outline" size="sm" onClick={logout}>
             Sair
           </Button>
-          <ModeToggle></ModeToggle>
         </div>
       </div>
     </header>
