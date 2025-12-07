@@ -7,37 +7,35 @@ import type {
   UpdatePostPayload,
 } from '@/types';
 
-export async function fetchPosts() {
-  const response = await api.get<ApiResponse<Post[]>>('/posts');
-  return response;
+export async function fetchPosts(): Promise<ApiResponse<Post[]>> {
+  return api.get<ApiResponse<Post[]>>('/posts');
 }
 
-export async function fetchPostById(id: string) {
-  const response = await api.get<ApiResponse<Post>>(`/posts/${id}`);
-  return response;
+export async function fetchPostById(id: string): Promise<ApiResponse<Post>> {
+  return api.get<ApiResponse<Post>>(`/posts/${id}`);
 }
 
-export async function deletePostById(id: string) {
+export async function deletePostById(id: string): Promise<ApiResponse<void>> {
   return api.delete<ApiResponse<void>>(`/posts/${id}`);
 }
 
-export async function createPost(payload: CreatePostPayload) {
-  const response = await api.post<ApiResponse<Post>>(`/posts`, payload);
-  return response;
+export async function createPost(payload: CreatePostPayload): Promise<ApiResponse<Post>> {
+  return api.post<ApiResponse<Post>>(`/posts`, payload);
 }
 
-export async function updatePostById(id: string, payload: UpdatePostPayload) {
-  const response = await api.put<ApiResponse<Post>>(`/posts/${id}`, payload);
-  return response;
+export async function updatePostById(
+  id: string,
+  payload: UpdatePostPayload,
+): Promise<ApiResponse<Post>> {
+  return api.put<ApiResponse<Post>>(`/posts/${id}`, payload);
 }
 
-export async function fetchMyPosts() {
-  const response = await api.get<ApiResponse<Post[]>>(`/posts/mine`);
-  return response;
+export async function fetchMyPosts(): Promise<ApiResponse<Post[]>> {
+  return api.get<ApiResponse<Post[]>>(`/posts/mine`);
 }
 
 // Buscar posts com filtros e paginação
-export async function searchPosts(params: PostSearchParams = {}): Promise<Post[]> {
+export async function searchPosts(params: PostSearchParams = {}): Promise<ApiResponse<Post[]>> {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -49,11 +47,10 @@ export async function searchPosts(params: PostSearchParams = {}): Promise<Post[]
   const queryString = searchParams.toString();
   const url = queryString ? `/posts/search?${queryString}` : '/posts';
 
-  const response = await api.get<Post[]>(url);
-  return response.data;
+  return api.get<ApiResponse<Post[]>>(url);
 }
 
-// Buscar meus posts com filtros e paginação
+// Buscar meus posts
 export async function searchMyPosts(params: PostSearchParams = {}): Promise<ApiResponse<Post[]>> {
   const searchParams = new URLSearchParams();
 
@@ -66,6 +63,5 @@ export async function searchMyPosts(params: PostSearchParams = {}): Promise<ApiR
   const queryString = searchParams.toString();
   const url = queryString ? `/posts/mine/search?${queryString}` : '/posts/mine';
 
-  const response = await api.get<ApiResponse<Post[]>>(url);
-  return response;
+  return api.get<ApiResponse<Post[]>>(url);
 }

@@ -7,6 +7,7 @@ import { fetchPostById, updatePostById } from '@/services/post.service';
 import type { Post } from '@/types';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function EditPost() {
   const { id } = useParams<{ id: string }>();
@@ -23,10 +24,10 @@ export default function EditPost() {
       try {
         const response = await fetchPostById(id);
         setPost(response.data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           title: 'Erro ao carregar post',
-          description: error?.message ?? 'Não foi possível carregar o post.',
+          description: getErrorMessage(error, 'Não foi possível carregar o post.'),
           variant: 'destructive',
         });
         navigate('/posts/mine');
@@ -64,10 +65,10 @@ export default function EditPost() {
         description: 'Suas alterações foram salvas com sucesso.',
       });
       navigate('/posts/mine');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Erro ao atualizar post',
-        description: error?.message ?? 'Não foi possível atualizar o post.',
+        description: getErrorMessage(error, 'Não foi possível atualizar o post.'),
         variant: 'destructive',
       });
     } finally {

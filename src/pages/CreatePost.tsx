@@ -6,6 +6,7 @@ import { PostForm, type PostFormData } from '@/components/posts/PostForm';
 import { createPost } from '@/services/post.service';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function CreatePost() {
   const [loading, setLoading] = useState(false);
@@ -30,10 +31,10 @@ export default function CreatePost() {
         description: 'Seu conteúdo foi publicado com sucesso.',
       });
       navigate('/posts/mine');
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Erro ao criar post',
-        description: error?.message ?? 'Não foi possível criar o post.',
+        description: getErrorMessage(error, 'Não foi possível criar o post.'),
         variant: 'destructive',
       });
     } finally {

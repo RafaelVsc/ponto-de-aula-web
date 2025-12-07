@@ -20,6 +20,7 @@ import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import defaultPostImage from '@/assets/login-bg.png';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function PostDetail() {
   const can = useCan();
@@ -31,25 +32,28 @@ export default function PostDetail() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    const postId = id;
+    if (!postId) {
+      setError('Post não encontrado.');
+      return;
+    }
 
     let mounted = true;
 
-    async function load() {
+    (async function load() {
       setLoading(true);
       setError(null);
       try {
-        const resp = await fetchPostById(id);
+        const resp = await fetchPostById(postId);
         if (!mounted) return;
         setPost(resp.data ?? null);
-      } catch (err: any) {
+      } catch (error: unknown) {
         if (!mounted) return;
-        setError(err?.message ?? 'Erro ao carregar post');
+        setError(getErrorMessage(error, 'Erro ao carregar seus posts'));
       } finally {
         if (mounted) setLoading(false);
       }
-    }
-    load();
+    })();
 
     return () => {
       mounted = false;
@@ -129,8 +133,6 @@ export default function PostDetail() {
             loading="lazy"
           />
         </div>
-        {/* {post.imageUrl && (
-        )} */}
 
         <div className="p-6 md:p-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>

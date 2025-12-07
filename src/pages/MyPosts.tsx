@@ -16,6 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function MyPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -30,9 +31,10 @@ export default function MyPosts() {
     setError(null);
     try {
       const resp = await fetchMyPosts();
+      console.log('meus posts', resp.data);
       setPosts(resp.data ?? []);
-    } catch (err: any) {
-      setError(err?.message ?? 'Erro ao carregar seus posts');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Erro ao carregar seus posts'));
     } finally {
       setLoading(false);
     }
@@ -56,10 +58,13 @@ export default function MyPosts() {
         title: 'Post excluído',
         description: 'O post foi removido com sucesso.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const description =
+        error instanceof Error ? error.message : 'Não foi possível excluir o post.';
+
       toast({
         title: 'Erro ao excluir',
-        description: error?.message ?? 'Não foi possível excluir o post.',
+        description,
         variant: 'destructive',
       });
     } finally {
