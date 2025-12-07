@@ -1,6 +1,7 @@
 import { policies } from '@/lib/policies';
 import type { Action, Subject } from '@/lib/policies';
 import { useAuth } from './useAuth';
+import type { Post } from '@/types';
 
 /**
  * Hook customizado para verificar as permissões do usuário.
@@ -18,7 +19,7 @@ export const useCan = () => {
 
   const user = authContext.user; // Defina user aqui!
 
-  const check = (action: Action, subject: Subject, subjectData?: any): boolean => {
+  const check = (action: Action, subject: Subject, subjectData?: Partial<Post>): boolean => {
     const userPolicy = policies[user.role];
 
     if (!userPolicy) {
@@ -35,7 +36,7 @@ export const useCan = () => {
 
     const dynamicRule = userPolicy.dynamic?.[subject]?.[action];
     if (dynamicRule) {
-      return dynamicRule(user, subjectData);
+      return dynamicRule(user, subjectData ?? {});
     }
 
     return false;
