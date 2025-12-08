@@ -49,9 +49,11 @@ export default function Dashboard() {
       // Verifica se realmente não tem filtros aplicados
       const hasNoSearch = !params.search || params.search.trim() === '';
       const hasNoTag = !params.tag || params.tag.trim() === '';
+      const hasNoAuthor = !params.authorId && !params.authorName;
+
       const hasNoSort = !params.sortBy && !params.sortOrder;
 
-      const shouldReset = hasNoSearch && hasNoTag && hasNoSort;
+      const shouldReset = hasNoSearch && hasNoTag && hasNoSort && hasNoAuthor;
 
       if (shouldReset) {
         console.log('🔄 Resetting to allPosts:', allPosts.length, 'posts');
