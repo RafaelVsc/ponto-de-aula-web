@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types';
@@ -12,8 +12,8 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
   { to: '/posts/mine', label: 'Meus Posts', roles: ['ADMIN', 'TEACHER', 'SECRETARY'] },
+  { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
   { to: '/schedule', label: 'Meus Dados', roles: ['ADMIN', 'SECRETARY', 'TEACHER', 'STUDENT'] },
 ];
 
@@ -45,9 +45,18 @@ export function Header() {
           <ul className="flex items-center gap-2">
             {NAV_ITEMS.filter(isVisible).map(item => (
               <li key={item.to}>
-                <Link to={item.to} className="text-sm text-muted-foreground hover:text-primary">
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `text-sm px-2 py-1 rounded ${
+                      isActive
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-muted-foreground hover:text-primary'
+                    }`
+                  }
+                >
                   {item.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
@@ -56,7 +65,6 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="hidden flex-col text-right sm:block">
             <span className="text-sm">Olá, {user?.name}</span>
-            {/* <small className="text-xs text-muted-foreground">{user?.role}</small> */}
           </div>
           <ModeToggle />
           <Button variant="outline" size="sm" onClick={logout}>
