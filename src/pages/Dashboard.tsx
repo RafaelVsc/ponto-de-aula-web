@@ -1,12 +1,10 @@
+import { NewPostButton } from '@/components/posts/NewPostButton';
 import { PostsGrid } from '@/components/posts/PostGrid';
+import { PostSearch } from '@/components/posts/PostSearch';
+import { getErrorMessage } from '@/lib/errors';
 import { fetchPosts, searchPosts } from '@/services/post.service';
 import type { Post, PostSearchParams } from '@/types';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button.tsx';
-import { Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { PostSearch } from '@/components/posts/PostSearch';
-import { getErrorMessage } from '@/lib/errors';
 
 export default function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -14,7 +12,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
@@ -98,10 +95,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Explore o conteúdo disponível</p>
         </div>
-        <Button onClick={() => navigate('/posts/new')}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Post
-        </Button>
+        <NewPostButton size="sm" className="min-w-[120px]" />
       </div>
 
       <PostSearch posts={allPosts} onSearch={handleSearch} loading={loading} />
