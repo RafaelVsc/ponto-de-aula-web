@@ -1,11 +1,11 @@
+import defaultPostImage from '@/assets/login-bg.png';
 import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { Post } from '@/types';
-import { SquarePlay, Edit, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useCan } from '@/hooks/useCan';
-import defaultPostImage from '@/assets/login-bg.png';
+import type { Post } from '@/types';
+import { SquarePlay } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { PostActions } from './PostActions';
 
 interface PostCardProps {
   post: Post;
@@ -16,6 +16,9 @@ interface PostCardProps {
 
 export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCardProps) {
   const can = useCan();
+  const canUpdate = can?.('update', 'Post', post) ?? false;
+  const canDelete = can?.('delete', 'Post', post) ?? false;
+  const hasActions = showActions && (canUpdate || canDelete);
   const MAX_TAGS = 4;
   const visibleTags = post.tags?.slice(0, MAX_TAGS) ?? [];
   const extraTags = (post.tags?.length ?? 0) - visibleTags.length;
@@ -35,8 +38,6 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
           }}
         />
       </div>
-      {/* {post.imageUrl ? (
-      ) : null} */}
 
       <div className="flex flex-col h-full mt-3">
         {/* Título */}
@@ -75,18 +76,6 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
             </div>
           </div>
           {/* Tags */}
-          {/* {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-secondary text-secondary-foreground text-xs rounded-full"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )} */}
 
           {visibleTags.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -107,30 +96,15 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
           )}
 
           {/* Ações (se habilitadas) */}
-          {showActions && (
+          {hasActions && (
             <div className="flex gap-2 pt-2 border-t">
-              {can('update', 'Post', post) && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onEdit?.(post)}
-                  className="flex-1"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Editar
-                </Button>
-              )}
-              {can('delete', 'Post', post) && (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => onDelete?.(post)}
-                  className="flex-1"
-                >
-                  <Trash2 className="w-4 h-4 mr-1" />
-                  Excluir
-                </Button>
-              )}
+              <PostActions
+                post={post}
+                onEdit={canUpdate ? onEdit : undefined}
+                onDelete={canDelete ? onDelete : undefined}
+                variant="text"
+                className="w-full justify-between sm:justify-start gap-2"
+              />
             </div>
           )}
         </div>
