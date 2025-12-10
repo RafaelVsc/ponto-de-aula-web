@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types';
 import { ModeToggle } from './mode-toggle';
+import { Menu, X } from 'lucide-react';
 
 type NavItem = {
   to: string;
@@ -19,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export function Header() {
   const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const role = user?.role;
 
@@ -30,7 +33,7 @@ export function Header() {
 
   return (
     <header className="w-full border-b bg-background/70 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <Link to="/dashboard" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
             <span className="text-xl">🎓</span>
@@ -41,19 +44,22 @@ export function Header() {
           </div>
         </Link>
 
-        <nav className="flex-1 px-6">
-          <ul className="flex items-center gap-2">
+        <nav
+          className={`order-3 -mx-2 ${menuOpen ? 'flex' : 'hidden'} flex-col overflow-x-auto px-2 sm:order-none sm:flex sm:flex-1 sm:px-6`}
+        >
+          <ul className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
             {NAV_ITEMS.filter(isVisible).map(item => (
               <li key={item.to}>
                 <NavLink
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-sm px-2 py-1 rounded ${
+                    `text-xs sm:text-sm px-2 py-1 rounded whitespace-nowrap ${
                       isActive
                         ? 'bg-primary/10 text-primary font-medium'
                         : 'text-muted-foreground hover:text-primary'
                     }`
                   }
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
                 </NavLink>
@@ -62,12 +68,25 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden flex-col text-right sm:block">
-            <span className="text-sm">Olá, {user?.name}</span>
+        <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <div className="flex flex-1 items-center gap-2 sm:hidden">
+            <span className="text-xs text-muted-foreground truncate">Olá, {user?.name}</span>
           </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="sm:hidden"
+            onClick={() => setMenuOpen(prev => !prev)}
+            aria-expanded={menuOpen}
+            aria-label="Abrir menu"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
           <ModeToggle />
-          <Button variant="outline" size="sm" onClick={logout}>
+          <Button variant="outline" size="icon" className="sm:hidden" onClick={logout}>
+            ↩
+          </Button>
+          <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={logout}>
             Sair
           </Button>
         </div>

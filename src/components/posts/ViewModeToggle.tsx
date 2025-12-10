@@ -9,10 +9,11 @@ type Props = {
 
 export function ViewModeToggle({ value, onChange, className }: Props) {
   return (
-    <div className={`flex items-center gap-2 ${className ?? ''}`}>
+    <div className={`flex flex-col items-stretch gap-2 sm:flex-row sm:items-center ${className ?? ''}`}>
       <Button
         variant={value === 'grid' ? 'default' : 'outline'}
         size="sm"
+        className="w-full sm:w-auto"
         onClick={() => onChange('grid')}
       >
         <LayoutGrid className="w-4 h-4 mr-1" />
@@ -21,6 +22,7 @@ export function ViewModeToggle({ value, onChange, className }: Props) {
       <Button
         variant={value === 'table' ? 'default' : 'outline'}
         size="sm"
+        className="w-full sm:w-auto"
         onClick={() => onChange('table')}
       >
         <List className="w-4 h-4 mr-1" />

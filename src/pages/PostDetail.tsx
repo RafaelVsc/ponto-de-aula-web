@@ -24,7 +24,7 @@ import { getErrorMessage } from '@/lib/errors';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function PostDetail() {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const can = useCan();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -64,7 +64,7 @@ export default function PostDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-8">
+      <div className="min-h-screen bg-background px-4 py-6 sm:p-8">
         <p className="text-sm text-muted-foreground">Carregando...</p>
       </div>
     );
@@ -72,9 +72,9 @@ export default function PostDetail() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background p-8">
+      <div className="min-h-screen bg-background px-4 py-6 sm:p-8">
         <p className="text-sm text-red-500">Erro: {error}</p>
-        <Link to="/" className="text-sm text-primary hover:underline mt-4 inline-block">
+        <Link to="/" className="mt-4 inline-block text-sm text-primary hover:underline">
           ← Voltar para o início
         </Link>
       </div>
@@ -83,9 +83,9 @@ export default function PostDetail() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background p-8">
+      <div className="min-h-screen bg-background px-4 py-6 sm:p-8">
         <p className="text-sm text-muted-foreground">Post não encontrado.</p>
-        <Link to="/" className="text-sm text-primary hover:underline mt-4 inline-block">
+        <Link to="/" className="mt-4 inline-block text-sm text-primary hover:underline">
           ← Voltar para o início
         </Link>
       </div>
@@ -120,47 +120,49 @@ export default function PostDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="bg-background px-4 py-6 sm:min-h-screen sm:p-8">
       <Link
         to="/"
-        className="text-sm text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-2 transition-colors"
+        className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground sm:mb-6"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="h-4 w-4" />
         Voltar
       </Link>
 
-      <Card className="p-0 overflow-hidden max-w-4xl mx-auto">
-        <div className="w-full h-64 md:h-96 bg-gray-100">
+      <Card className="mx-auto max-w-4xl overflow-hidden p-0">
+        <div className="h-48 w-full bg-gray-100 sm:h-64 md:h-96">
           <img
             src={post.imageUrl || defaultPostImage}
             alt={post.title ?? 'Imagem do post'}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             loading="lazy"
           />
         </div>
 
-        <div className="p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
+        <div className="p-4 sm:p-6 md:p-8">
+          <h1 className="mb-3 text-2xl font-bold sm:mb-4 sm:text-3xl md:text-4xl">
+            {post.title}
+          </h1>
           {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="mb-4 flex flex-wrap gap-2 sm:mb-6">
               {post.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full"
+                  className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
                 >
                   {tag}
                 </span>
               ))}
             </div>
           )}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-6 border-b">
+          <div className="mb-6 flex flex-wrap items-center gap-2 border-b pb-4 text-sm text-muted-foreground sm:gap-4 sm:pb-6">
             <span>{post.author ?? 'Autor desconhecido'}</span>
             <span>•</span>
 
             {wasUpdated ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="inline-flex items-center gap-1.5 cursor-help group">
+                  <span className="group inline-flex cursor-help items-center gap-1.5">
                     <time dateTime={displayDate}>
                       atualizado em{' '}
                       {new Date(displayDate!).toLocaleDateString('pt-BR', {
@@ -169,7 +171,7 @@ export default function PostDetail() {
                         year: 'numeric',
                       })}
                     </time>
-                    <Info className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    <Info className="h-3.5 w-3.5 opacity-50 transition-opacity group-hover:opacity-100" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -196,16 +198,16 @@ export default function PostDetail() {
             )}
           </div>
           <div className="prose prose-slate max-w-none">
-            <p className="text-base leading-relaxed whitespace-pre-wrap">{post.content}</p>
+            <p className="whitespace-pre-wrap text-base leading-relaxed">{post.content}</p>
           </div>
           {embedUrl && (
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">Vídeo complementar</h2>
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+            <div className="mt-6 sm:mt-8">
+              <h2 className="mb-4 text-xl font-semibold">Vídeo complementar</h2>
+              <div className="aspect-video overflow-hidden rounded-lg bg-gray-100">
                 <iframe
                   src={embedUrl}
                   title="Vídeo do post"
-                  className="w-full h-full"
+                  className="h-full w-full"
                   loading="lazy"
                   allowFullScreen
                 />
@@ -214,71 +216,43 @@ export default function PostDetail() {
           )}
           {/* Botões de ação para quem pode editar/deletar */}
           {hasActions && (
-          <div className="flex gap-4 mt-8">
-            {canUpdate && (
-              <Button
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                onClick={() => navigate(`/posts/edit/${post.id}`)}
-              >
-                Editar
-              </Button>
-            )}
+            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
+              {canUpdate && (
+                <Button
+                  size="sm"
+                  className="w-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto"
+                  onClick={() => navigate(`/posts/edit/${post.id}`)}
+                >
+                  Editar
+                </Button>
+              )}
 
-            {canDelete && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                    Deletar
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div>
+              {canDelete && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="w-full bg-red-600 text-white hover:bg-red-700 sm:w-auto"
+                    >
+                      Deletar
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           )}
-          {/* <div className="flex gap-4 mt-8">
-            {can && can('update', 'Post', post) && (
-              <Button
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                onClick={() => navigate(`/posts/edit/${post.id}`)}
-              >
-                Editar
-              </Button>
-            )}
-
-            {can && can('delete', 'Post', post) && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
-                    Deletar
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-          </div> */}
         </div>
       </Card>
     </div>

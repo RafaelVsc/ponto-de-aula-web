@@ -104,14 +104,14 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center gap-3 flex-wrap">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">Explore o conteúdo disponível</p>
           </div>
-          <div className="flex items-center gap-2">
-            <ViewModeToggle value={viewMode} onChange={changeView} />
-            <NewPostButton size="sm" className="min-w-[120px]" />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+            <ViewModeToggle value={viewMode} onChange={changeView} className="w-full sm:w-auto" />
+            <NewPostButton size="sm" className="w-full min-w-[140px] sm:w-auto" />
           </div>
         </div>
 
