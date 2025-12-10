@@ -21,15 +21,17 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import defaultPostImage from '@/assets/login-bg.png';
 import { getErrorMessage } from '@/lib/errors';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function PostDetail() {
+  const {user} = useAuth();
   const can = useCan();
-
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const postId = id;
@@ -90,11 +92,14 @@ export default function PostDetail() {
     );
   }
 
+  const isOwner = post?.authorId === user?.id;
+  const canUpdate = (can?.('update', 'Post', post) ?? false) && isOwner;
+  const canDelete = can?.('delete', 'Post', post) ?? false;
+  const hasActions = canUpdate || canDelete;
+
   const videoUrl = post.videoUrl;
-  console.log('videoUrl original:', videoUrl);
 
   const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
-  console.log('embedUrl convertida:', embedUrl);
 
   // Determinar qual data mostrar
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
@@ -208,7 +213,41 @@ export default function PostDetail() {
             </div>
           )}
           {/* Botões de ação para quem pode editar/deletar */}
+          {hasActions && (
           <div className="flex gap-4 mt-8">
+            {canUpdate && (
+              <Button
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                onClick={() => navigate(`/posts/edit/${post.id}`)}
+              >
+                Editar
+              </Button>
+            )}
+
+            {canDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                    Deletar
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+          )}
+          {/* <div className="flex gap-4 mt-8">
             {can && can('update', 'Post', post) && (
               <Button
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
@@ -239,7 +278,7 @@ export default function PostDetail() {
                 </AlertDialogContent>
               </AlertDialog>
             )}
-          </div>
+          </div> */}
         </div>
       </Card>
     </div>
