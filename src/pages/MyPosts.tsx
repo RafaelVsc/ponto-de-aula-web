@@ -1,11 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { NewPostButton } from '@/components/posts/NewPostButton';
 import { PostsGrid } from '@/components/posts/PostGrid';
-import { useToast } from '@/components/ui/ToastProvider';
-import { fetchMyPosts, deletePostById } from '@/services/post.service';
-import type { Post } from '@/types';
-import { Plus } from 'lucide-react';
+import { PostTable } from '@/components/posts/PostTable';
+import { ViewModeToggle } from '@/components/posts/ViewModeToggle';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,15 +12,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useToast } from '@/components/ui/ToastProvider';
+import { useViewMode } from '@/hooks/useViewMode';
 import { getErrorMessage } from '@/lib/errors';
+import { deletePostById, fetchMyPosts } from '@/services/post.service';
+import type { Post } from '@/types';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const VIEW_MODE_KEY = 'pda:viewMode:mine';
 
 export default function MyPosts() {
+  const { viewMode, changeView } = useViewMode(VIEW_MODE_KEY, 'grid');
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deletePost, setDeletePost] = useState<Post | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const emptyMessage = useMemo(
+    () => 'Você ainda não criou nenhum post. Que tal começar agora?',
+    [],
+  );
 
   const loadPosts = async () => {
     setLoading(true);
@@ -72,30 +83,47 @@ export default function MyPosts() {
     }
   };
 
+  const list = (
+    <>
+      {viewMode === 'grid' ? (
+        <PostsGrid
+          posts={posts}
+          loading={loading}
+          error={error}
+          showActions={true}
+          onEdit={handleEdit}
+          onDelete={setDeletePost}
+          emptyMessage={emptyMessage}
+        />
+      ) : (
+        <PostTable
+          posts={posts}
+          loading={loading}
+          error={error}
+          showActions
+          onEdit={handleEdit}
+          onDelete={setDeletePost}
+          emptyMessage={emptyMessage}
+        />
+      )}
+    </>
+  );
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">Meus Posts</h1>
           <p className="text-muted-foreground">Gerencie seus conteúdos</p>
         </div>
-        <Button onClick={() => navigate('/posts/new')}>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Post
-        </Button>
+        <div className="flex items-center gap-2">
+          <ViewModeToggle value={viewMode} onChange={changeView} />
+          <NewPostButton size="sm" className="min-w-[120px]" />
+        </div>
       </div>
 
-      <PostsGrid
-        posts={posts}
-        loading={loading}
-        error={error}
-        showActions={true}
-        onEdit={handleEdit}
-        onDelete={setDeletePost}
-        emptyMessage="Você ainda não criou nenhum post. Que tal começar agora?"
-      />
+      {list}
 
-      {/* Dialog de confirmação de exclusão */}
       <AlertDialog open={!!deletePost} onOpenChange={() => setDeletePost(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
