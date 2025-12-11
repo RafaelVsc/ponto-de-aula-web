@@ -45,9 +45,9 @@ export function Header() {
         </Link>
 
         <nav
-          className={`order-3 -mx-2 ${menuOpen ? 'flex' : 'hidden'} flex-col overflow-x-auto px-2 sm:order-none sm:flex sm:flex-1 sm:px-6`}
+          className={`order-3 -mx-2 w-full ${menuOpen ? 'flex border border-border bg-background p-3 rounded-md' : 'hidden'} flex-col overflow-x-auto px-2 sm:order-none sm:mx-0 sm:flex sm:flex-1 sm:overflow-visible sm:border-0 sm:bg-transparent sm:p-0 sm:px-6`}
         >
-          <ul className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+          <ul className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-start sm:gap-3">
             {NAV_ITEMS.filter(isVisible).map(item => (
               <li key={item.to}>
                 <NavLink
@@ -70,7 +70,7 @@ export function Header() {
 
         <div className="flex items-center justify-between gap-3 sm:justify-end">
           <div className="flex flex-1 items-center gap-2 sm:hidden">
-            <span className="text-xs text-muted-foreground truncate">Olá, {user?.name}</span>
+            <span className="truncate text-xs text-muted-foreground">Olá, {user?.name}</span>
           </div>
           <Button
             variant="outline"
@@ -82,6 +82,10 @@ export function Header() {
           >
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
+          <div className="hidden flex-col text-right leading-tight sm:flex">
+            <span className="text-sm">Olá, {user?.name}</span>
+            {/* <span className="text-xs text-muted-foreground">{user?.role}</span> */}
+          </div>
           <ModeToggle />
           <Button variant="outline" size="icon" className="sm:hidden" onClick={logout}>
             ↩

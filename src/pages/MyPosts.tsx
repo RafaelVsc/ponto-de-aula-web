@@ -111,7 +111,7 @@ export default function MyPosts() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center gap-3 flex-wrap">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h1 className="text-2xl font-bold">Meus Posts</h1>
           <p className="text-muted-foreground">Gerencie seus conteúdos</p>
