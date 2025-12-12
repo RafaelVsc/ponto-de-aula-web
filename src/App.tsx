@@ -37,7 +37,7 @@ function App() {
               <Route
                 path="/posts/:id"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
                     <Layout>
                       <PostDetail />
                     </Layout>
@@ -47,7 +47,7 @@ function App() {
               <Route
                 path="/posts/mine"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
                     <Layout>
                       <MyPosts />
                     </Layout>
@@ -87,7 +87,7 @@ function App() {
               <Route
                 path="/users"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
                     <Layout>
                       <Users />
                     </Layout>
