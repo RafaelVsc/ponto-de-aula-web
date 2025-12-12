@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/context/AuthContext";
-import type { Role } from "@/types";
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import type { Role } from '@/types';
+import { ModeToggle } from './mode-toggle';
+import { Menu, X } from 'lucide-react';
 
 type NavItem = {
   to: string;
@@ -10,15 +13,15 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/users", label: "Usuários", roles: ["ADMIN", "SECRETARY"] },
-  { to: "/classes", label: "Turmas", roles: ["ADMIN", "TEACHER"] },
-  { to: "/schedule", label: "Meu Horário", roles: ["TEACHER", "STUDENT"] },
-  { to: "/reports", label: "Relatórios", roles: ["ADMIN"] },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/posts/mine', label: 'Meus Posts', roles: ['ADMIN', 'TEACHER', 'SECRETARY'] },
+  { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
+  { to: '/schedule', label: 'Meus Dados', roles: ['ADMIN', 'SECRETARY', 'TEACHER', 'STUDENT'] },
 ];
 
 export function Header() {
   const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const role = user?.role;
 
@@ -30,7 +33,7 @@ export function Header() {
 
   return (
     <header className="w-full border-b bg-background/70 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <Link to="/dashboard" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
             <span className="text-xl">🎓</span>
@@ -41,24 +44,53 @@ export function Header() {
           </div>
         </Link>
 
-        <nav className="flex-1 px-6">
-          <ul className="flex items-center gap-2">
-            {NAV_ITEMS.filter(isVisible).map((item) => (
+        <nav
+          className={`order-3 -mx-2 w-full ${menuOpen ? 'flex border border-border bg-background p-3 rounded-md' : 'hidden'} flex-col overflow-x-auto px-2 sm:order-none sm:mx-0 sm:flex sm:flex-1 sm:overflow-visible sm:border-0 sm:bg-transparent sm:p-0 sm:px-6`}
+        >
+          <ul className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-start sm:gap-3">
+            {NAV_ITEMS.filter(isVisible).map(item => (
               <li key={item.to}>
-                <Link to={item.to} className="text-sm text-muted-foreground hover:text-primary">
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `text-xs sm:text-sm px-2 py-1 rounded whitespace-nowrap ${
+                      isActive
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-muted-foreground hover:text-primary'
+                    }`
+                  }
+                  onClick={() => setMenuOpen(false)}
+                >
                   {item.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <div className="hidden flex-col text-right sm:block">
-            <span className="text-sm">Olá, {user?.name}</span>
-            {/* <small className="text-xs text-muted-foreground">{user?.role}</small> */}
+        <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <div className="flex flex-1 items-center gap-2 sm:hidden">
+            <span className="truncate text-xs text-muted-foreground">Olá, {user?.name}</span>
           </div>
-          <Button variant="outline" size="sm" onClick={logout}>
+          <Button
+            variant="outline"
+            size="icon"
+            className="sm:hidden"
+            onClick={() => setMenuOpen(prev => !prev)}
+            aria-expanded={menuOpen}
+            aria-label="Abrir menu"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
+          <div className="hidden flex-col text-right leading-tight sm:flex">
+            <span className="text-sm">Olá, {user?.name}</span>
+            {/* <span className="text-xs text-muted-foreground">{user?.role}</span> */}
+          </div>
+          <ModeToggle />
+          <Button variant="outline" size="icon" className="sm:hidden" onClick={logout}>
+            ↩
+          </Button>
+          <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={logout}>
             Sair
           </Button>
         </div>
