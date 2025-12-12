@@ -6,6 +6,7 @@ import { PostSearch } from '@/components/posts/PostSearch';
 import { ViewModeToggle } from '@/components/posts/ViewModeToggle';
 import { getErrorMessage } from '@/lib/errors';
 import { useViewMode } from '@/hooks/useViewMode';
+import { useAuth } from '@/hooks/useAuth';
 import { fetchPosts, searchPosts } from '@/services/post.service';
 import type { Post, PostSearchParams } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ const VIEW_MODE_KEY = 'pda:viewMode:dashboard';
 
 export default function Dashboard() {
   const { viewMode, changeView } = useViewMode(VIEW_MODE_KEY, 'grid');
+  const { user } = useAuth();
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [filterOptionsPosts, setFilterOptionsPosts] = useState<Post[]>([]);
@@ -101,6 +103,9 @@ export default function Dashboard() {
     ? 'Nenhum post encontrado com os filtros aplicados.'
     : 'Nenhum conteúdo disponível no momento.';
 
+  const canCreatePost =
+    user?.role === 'ADMIN' || user?.role === 'SECRETARY' || user?.role === 'TEACHER';
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4">
@@ -111,7 +116,9 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
             <ViewModeToggle value={viewMode} onChange={changeView} className="w-full sm:w-auto" />
-            <NewPostButton size="sm" className="w-full min-w-[140px] sm:w-auto" />
+            {canCreatePost && (
+              <NewPostButton size="sm" className="w-full min-w-[140px] sm:w-auto" />
+            )}
           </div>
         </div>
 
