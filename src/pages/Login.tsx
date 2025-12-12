@@ -1,16 +1,17 @@
-import { FormEvent, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { LogIn, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/components/ui/ToastProvider";
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LogIn, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/components/ui/ToastProvider';
 
 export default function Login() {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const { login, isAuthenticating, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function Login() {
   // Redireciona se já estiver logado
   useEffect(() => {
     if (user) {
-      navigate("/dashboard", { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
 
@@ -28,17 +29,16 @@ export default function Login() {
     try {
       await login(identifier.trim(), password);
       toast({
-        title: "Login realizado!",
-        description: "Bem-vindo ao Ponto de Aula",
+        title: 'Login realizado!',
+        description: 'Bem-vindo ao Ponto de Aula',
       });
-      navigate("/dashboard", { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (error) {
-      console.error("Erro no login:", error);
+      console.error('Erro no login:', error);
       toast({
-        title: "Erro ao entrar",
-        description:
-          error instanceof Error ? error.message : "Credenciais inválidas",
-        variant: "destructive",
+        title: 'Erro ao entrar',
+        description: error instanceof Error ? error.message : 'Credenciais inválidas',
+        variant: 'destructive',
       });
     }
   };
@@ -50,13 +50,9 @@ export default function Login() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <span className="text-3xl">🎓</span>
           </div>
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            Ponto de Aula
-          </p>
+          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Ponto de Aula</p>
           <h1 className="text-2xl font-semibold">Acesse sua conta</h1>
-          <p className="text-sm text-muted-foreground">
-            Use o email institucional ou username
-          </p>
+          <p className="text-sm text-muted-foreground">Use o email institucional ou username</p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,7 +62,7 @@ export default function Login() {
               id="identifier"
               autoComplete="username"
               value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              onChange={e => setIdentifier(e.target.value)}
               placeholder="admin@pontodeaula.com"
               required
               disabled={isAuthenticating}
@@ -80,7 +76,7 @@ export default function Login() {
               type="password"
               autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={8}
               required
@@ -88,11 +84,7 @@ export default function Login() {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isAuthenticating}
-          >
+          <Button type="submit" className="w-full" disabled={isAuthenticating}>
             {isAuthenticating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -109,18 +101,16 @@ export default function Login() {
 
         {/* Credenciais de teste */}
         <div className="border-t pt-4">
-          <p className="mb-2 text-xs text-muted-foreground">
-            Credenciais de teste:
-          </p>
+          <p className="mb-2 text-xs text-muted-foreground">Credenciais de teste:</p>
           <div className="space-y-1 text-xs text-muted-foreground">
             <p>
-              <strong>Admin:</strong> admin@pontodeaula.com / Admin@2024
+              <strong>Admin:</strong> admin@pontodeaula.com / admin@2025 - 12345678
             </p>
             <p>
-              <strong>Professor:</strong> teacher@pontodeaula.com / Teacher@2024
+              <strong>Professor:</strong> teacher@pontodeaula.com / teacher@2025 - 12345678
             </p>
             <p>
-              <strong>Aluno:</strong> student@pontodeaula.com / Student@2024
+              <strong>Aluno:</strong> student@pontodeaula.com / student@2025 - 12345678
             </p>
           </div>
         </div>

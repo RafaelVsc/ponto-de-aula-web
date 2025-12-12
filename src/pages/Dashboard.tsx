@@ -1,130 +1,144 @@
-import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { SquarePlay } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
-import { fetchPosts } from "@/services/post.service";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { NewPostButton } from '@/components/posts/NewPostButton';
+import { PostsGrid } from '@/components/posts/PostGrid';
+import { PostTable } from '@/components/posts/PostTable';
+import { PostSearch } from '@/components/posts/PostSearch';
+import { ViewModeToggle } from '@/components/posts/ViewModeToggle';
+import { getErrorMessage } from '@/lib/errors';
+import { useViewMode } from '@/hooks/useViewMode';
+import { fetchPosts, searchPosts } from '@/services/post.service';
+import type { Post, PostSearchParams } from '@/types';
+import { Button } from '@/components/ui/button';
+
+const PAGE_SIZE = 9;
+const VIEW_MODE_KEY = 'pda:viewMode:dashboard';
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { viewMode, changeView } = useViewMode(VIEW_MODE_KEY, 'grid');
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [filterOptionsPosts, setFilterOptionsPosts] = useState<Post[]>([]);
+  const [filters, setFilters] = useState<PostSearchParams>({});
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
+  const hasActiveFilters = useMemo(
+    () =>
+      Boolean(
+        filters.search ||
+          filters.tag ||
+          filters.authorId ||
+          filters.authorName ||
+          filters.sortBy ||
+          filters.sortOrder,
+      ),
+    [filters],
+  );
+
+  const fetchPage = useCallback(
+    async (targetPage: number, nextFilters: PostSearchParams) => {
       setLoading(true);
       setError(null);
       try {
-        const resp = await fetchPosts();
-        console.log("fetchPosts response:", resp);
-        if (!mounted) return;
-        setPosts(resp.data ?? []);
-        console.log("posts (state will be):", resp.data ?? []);
-      } catch (err: any) {
-        setError(err?.message ?? "Erro ao carregar posts");
+        // Look-ahead: busca um item extra para saber se existe próxima página
+        const resp = await searchPosts({ ...nextFilters, page: targetPage, limit: PAGE_SIZE + 1 });
+        const items = resp.data ?? [];
+        setHasNextPage(items.length > PAGE_SIZE);
+        setPosts(items.slice(0, PAGE_SIZE));
+        setPage(targetPage);
+      } catch (err) {
+        setError(getErrorMessage(err, 'Erro ao buscar posts'));
       } finally {
-        if (mounted) setLoading(false);
+        setLoading(false);
       }
-    }
-    load();
+    },
+    [],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    // Carrega opções para filtros (tags/autores) e primeira página paginada
+    (async () => {
+      try {
+        const resp = await fetchPosts();
+        if (!mounted) return;
+        setFilterOptionsPosts(resp.data ?? []);
+      } catch (err) {
+        console.error('Erro ao carregar opções de filtros', err);
+      }
+    })();
+
+    fetchPage(1, {});
+
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [fetchPage]);
+
+  const handleSearch = useCallback(
+    async (params: PostSearchParams) => {
+      const { page: _p, limit: _l, ...cleanFilters } = params; // paginação controlada aqui
+      setFilters(cleanFilters);
+      await fetchPage(1, cleanFilters);
+    },
+    [fetchPage],
+  );
+
+  const handlePrevPage = async () => {
+    if (page === 1) return;
+    await fetchPage(page - 1, filters);
+  };
+
+  const handleNextPage = async () => {
+    if (!hasNextPage) return;
+    await fetchPage(page + 1, filters);
+  };
+
+  const emptyMessage = hasActiveFilters
+    ? 'Nenhum post encontrado com os filtros aplicados.'
+    : 'Nenhum conteúdo disponível no momento.';
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="pt-2">
-        {loading && (
-          <p className="text-sm text-muted-foreground">Carregando posts...</p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground">Explore o conteúdo disponível</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+            <ViewModeToggle value={viewMode} onChange={changeView} className="w-full sm:w-auto" />
+            <NewPostButton size="sm" className="w-full min-w-[140px] sm:w-auto" />
+          </div>
+        </div>
+
+        <PostSearch posts={filterOptionsPosts} onSearch={handleSearch} loading={loading} />
+
+        {viewMode === 'grid' ? (
+          <PostsGrid posts={posts} loading={loading} error={error} emptyMessage={emptyMessage} />
+        ) : (
+          <PostTable posts={posts} loading={loading} error={error} emptyMessage={emptyMessage} />
         )}
-        {error && <p className="text-sm text-red-500">Erro: {error}</p>}
-        {!loading && !error && posts.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Nenhum post encontrado.
-          </p>
-        )}
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-        {posts.map((post) => (
-          <Card key={post.id} className="p-4 h-full">
-            {/* área fixa da imagem (ex.: URL do Unsplash) */}
-            {(post as any).imageUrl ? (
-              <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-100">
-                <img
-                  src={(post as any).imageUrl}
-                  alt={post.title ?? "Imagem do post"}
-                  className="w-full h-full object-cover object-center"
-                  loading="lazy"
-                />
-              </div>
-            ) : (
-              <div className="w-full h-40 sm:h-48 lg:h-36 bg-gray-50 flex items-center justify-center text-sm text-muted-foreground">
-                Sem imagem
-              </div>
-            )}
-            {/* h-full para altura igual */}
-            <div className="flex flex-col h-full">
-              <h2 className="text-lg font-semibold">{post.title}</h2>
-
-              {/* corpo flexível que ocupa espaço e aplica ellipsis */}
-              <p className="text-sm text-muted-foreground mt-2 line-clamp-2 flex-1 overflow-hidden">
-                {post.content}
-              </p>
-
-              {/* footer empilhado verticalmente */}
-              <div className="mt-4 flex flex-col gap-1 text-xs text-muted-foreground">
-                <span>
-                  Escrito por: {(post as any).author ?? "Autor desconhecido"}
-                </span>
-
-                <span>
-                  criado em:{" "}
-                  {post.createdAt
-                    ? new Date(post.createdAt).toLocaleDateString()
-                    : ""}
-                </span>
-
-                {/* ícone / tooltip em linha separada */}
-                <div>
-                  {(post as any).videoUrl ? (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <span aria-hidden>
-                          <SquarePlay
-                            className="w-5 h-5"
-                            color="#dc2626"
-                            strokeWidth={2}
-                          />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Conteúdo adicional em vídeo</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <span aria-hidden>
-                      <SquarePlay
-                        className="w-5 h-5"
-                        color="#9ca3af"
-                        strokeWidth={2}
-                      />
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Card>
-        ))}
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm text-muted-foreground">Página {page}</div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={page === 1 || loading}>
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={!hasNextPage || loading}
+            >
+              Próxima
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
