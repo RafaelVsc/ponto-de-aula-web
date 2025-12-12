@@ -10,6 +10,8 @@ import MyPosts from '@/pages/MyPosts';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PostDetail from './pages/PostDetail';
 import { ThemeProvider } from './components/theme-provider';
+import Profile from './pages/Profile';
+import Users from './pages/Users';
 
 function App() {
   return (
@@ -68,6 +70,26 @@ function App() {
                   <ProtectedRoute>
                     <Layout>
                       <EditPost />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Profile />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Users />
                     </Layout>
                   </ProtectedRoute>
                 }

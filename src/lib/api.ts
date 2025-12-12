@@ -2,10 +2,11 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // Axios retorna apenas o body por causa do interceptor abaixo.
-type ApiClient = Omit<AxiosInstance, 'get' | 'post' | 'put' | 'delete'> & {
+type ApiClient = Omit<AxiosInstance, 'get' | 'post' | 'put' | 'delete' | 'patch'> & {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
   post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T>;
   put<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T>;
+  patch<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<T>;
   delete<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
 };
 
@@ -28,7 +29,10 @@ api.interceptors.response.use(
   response => response.data,
   error => {
     const status = error?.response?.status;
-    if (status === 401) {
+    const requestUrl = error?.config?.url ?? '';
+
+    // Não desloga ao errar a senha atual; demais 401 forçam logout
+    if (status === 401 && !requestUrl.includes('/users/me/password')) {
       localStorage.removeItem('pda:token');
       window.dispatchEvent(new Event('auth:logout'));
     }
