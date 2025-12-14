@@ -12,6 +12,7 @@ import PostDetail from './pages/PostDetail';
 import { ThemeProvider } from './components/theme-provider';
 import Profile from './pages/Profile';
 import Users from './pages/Users';
+import UserForm from './pages/UserForm';
 
 function App() {
   return (
@@ -87,9 +88,29 @@ function App() {
               <Route
                 path="/users"
                 element={
-                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
                     <Layout>
                       <Users />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users/new"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
+                    <Layout>
+                      <UserForm />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
+                    <Layout>
+                      <UserForm />
                     </Layout>
                   </ProtectedRoute>
                 }

@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/ToastProvider';
 import { getMe, updateMe, changeMyPassword } from '@/services/user.service';
 import { getErrorMessage, getApiMessage } from '@/lib/errors';
 import type { User } from '@/types';
+import { PasswordInput } from '@/components/ui/password-input';
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
@@ -55,7 +56,8 @@ export default function Profile() {
   const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const currentPassword = (form.elements.namedItem('currentPassword') as HTMLInputElement)?.value ?? '';
+    const currentPassword =
+      (form.elements.namedItem('currentPassword') as HTMLInputElement)?.value ?? '';
     const newPassword = (form.elements.namedItem('newPassword') as HTMLInputElement)?.value ?? '';
     setChangingPwd(true);
     try {
@@ -146,11 +148,11 @@ export default function Profile() {
           <form className="space-y-3" onSubmit={handleChangePassword}>
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Senha atual</Label>
-              <Input id="currentPassword" name="currentPassword" type="password" required />
+              <PasswordInput id="currentPassword" name="currentPassword" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="newPassword">Nova senha</Label>
-              <Input id="newPassword" name="newPassword" type="password" minLength={8} required />
+              <PasswordInput id="newPassword" name="newPassword" minLength={8} required />
             </div>
             <Button type="submit" disabled={changingPwd}>
               {changingPwd ? 'Alterando...' : 'Alterar senha'}

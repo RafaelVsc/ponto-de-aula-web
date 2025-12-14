@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/ToastProvider';
+import { PasswordInput } from '@/components/ui/password-input';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -71,7 +72,17 @@ export default function Login() {
 
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
-            <Input
+            <PasswordInput
+              id="password"
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              minLength={8}
+              required
+            />
+
+            {/* <Input
               id="password"
               type="password"
               autoComplete="current-password"
@@ -81,7 +92,7 @@ export default function Login() {
               minLength={8}
               required
               disabled={isAuthenticating}
-            />
+            /> */}
           </div>
 
           <Button type="submit" className="w-full" disabled={isAuthenticating}>
