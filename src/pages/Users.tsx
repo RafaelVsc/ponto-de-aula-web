@@ -128,7 +128,7 @@ export default function Users() {
               <Button
                 size="sm"
                 variant="outline"
-                className="w-full sm:w-44 justify-start"
+                className="w-full sm:w-44 justify-center sm:justify-start text-center"
                 disabled={!canAccess}
               >
                 <Filter className="w-4 h-4 mr-2" />

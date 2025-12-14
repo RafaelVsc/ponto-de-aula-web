@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types';
 import { ModeToggle } from './mode-toggle';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 
 type NavItem = {
   to: string;
@@ -87,11 +87,14 @@ export function Header() {
             {/* <span className="text-xs text-muted-foreground">{user?.role}</span> */}
           </div>
           <ModeToggle />
-          <Button variant="outline" size="icon" className="sm:hidden" onClick={logout}>
-            ↩
-          </Button>
-          <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={logout}>
-            Sair
+          <Button
+            variant="outline"
+            size="sm"
+            className="inline-flex items-center gap-2"
+            onClick={logout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sair</span>
           </Button>
         </div>
       </div>
