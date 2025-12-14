@@ -186,3 +186,73 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .rich-editor .ql-editor {
+    min-height: 240px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .post-content {
+    @apply max-w-none;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .post-content h1,
+  .post-content h2,
+  .post-content h3 {
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+    line-height: 1.3;
+  }
+  .post-content h1 {
+    font-size: 1.5rem;
+  }
+  .post-content h2 {
+    font-size: 1.25rem;
+  }
+  .post-content h3 {
+    font-size: 1.125rem;
+  }
+  .post-content p {
+    margin: 0 0 0.75rem;
+  }
+  .post-content blockquote {
+    border-left: 3px solid color-mix(in oklab, var(--primary), black 10%);
+    padding-left: 0.75rem;
+    color: color-mix(in oklab, var(--foreground), black 10%);
+    margin: 0 0 0.75rem;
+  }
+  .post-content ul {
+    list-style-type: disc;
+    list-style-position: inside;
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+  }
+  .post-content ol {
+    list-style-type: decimal;
+    list-style-position: inside;
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+  }
+  .post-content li[data-list='bullet'] {
+    list-style-type: disc;
+    list-style-position: inside;
+    display: list-item;
+    margin-left: 1.25rem;
+  }
+  .post-content li[data-list='ordered'] {
+    list-style-type: decimal;
+    list-style-position: inside;
+    display: list-item;
+    margin-left: 1.25rem;
+  }
+  .post-content li + li {
+    margin-top: 0.25rem;
+  }
+  .post-content a {
+    color: #2563eb;
+    text-decoration: underline;
+    word-break: break-word;
+  }
+}
