@@ -22,6 +22,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import defaultPostImage from '@/assets/login-bg.png';
 import { getErrorMessage } from '@/lib/errors';
 import { useAuth } from '@/hooks/useAuth';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export default function PostDetail() {
   const { user } = useAuth();
@@ -197,9 +198,10 @@ export default function PostDetail() {
               </time>
             )}
           </div>
-          <div className="prose prose-slate max-w-none">
-            <p className="whitespace-pre-wrap text-base leading-relaxed">{post.content}</p>
-          </div>
+          <div
+            className="post-content"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
+          />
           {embedUrl && (
             <div className="mt-6 sm:mt-8">
               <h2 className="mb-4 text-xl font-semibold">Vídeo complementar</h2>
