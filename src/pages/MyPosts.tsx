@@ -42,7 +42,6 @@ export default function MyPosts() {
     setError(null);
     try {
       const resp = await fetchMyPosts();
-      console.log('meus posts', resp.data);
       setPosts(resp.data ?? []);
     } catch (error: unknown) {
       setError(getErrorMessage(error, 'Erro ao carregar seus posts'));
