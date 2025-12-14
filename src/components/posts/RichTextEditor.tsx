@@ -32,7 +32,6 @@ const formats = [
   'link',
   'color',
   'background',
-  'clean',
 ];
 
 export function RichTextEditor({ value, onChange, placeholder, readOnly, className }: Props) {

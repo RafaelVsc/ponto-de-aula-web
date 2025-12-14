@@ -106,6 +106,14 @@ export default function PostDetail() {
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/dashboard', { replace: true });
+    }
+  };
+
   async function handleDelete() {
     if (!post) return;
     try {
@@ -122,13 +130,14 @@ export default function PostDetail() {
 
   return (
     <div className="bg-background px-4 py-6 sm:min-h-screen sm:p-8">
-      <Link
-        to="/"
+      <button
+        type="button"
+        onClick={handleBack}
         className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground sm:mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         Voltar
-      </Link>
+      </button>
 
       <Card className="mx-auto max-w-4xl overflow-hidden p-0">
         <div className="h-48 w-full bg-gray-100 sm:h-64 md:h-96">
