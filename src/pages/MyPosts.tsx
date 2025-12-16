@@ -172,7 +172,7 @@ export default function MyPosts() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive">
+            <AlertDialogAction variant="destructive" onClick={handleDeleteConfirm}>
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>

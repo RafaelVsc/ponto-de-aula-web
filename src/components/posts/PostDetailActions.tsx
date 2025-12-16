@@ -45,7 +45,9 @@ export function PostDetailActions({ canUpdate, canDelete, onEdit, onDelete }: Pr
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete}>Deletar</AlertDialogAction>
+              <AlertDialogAction variant="destructive" onClick={onDelete}>
+                Deletar
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

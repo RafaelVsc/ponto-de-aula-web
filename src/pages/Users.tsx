@@ -17,7 +17,12 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Filter } from 'lucide-react';
 import { getRoleLabel } from '@/lib/roles';
-import { canManageAllUsers, canManageUserRole, canViewUsers, shouldHideSelf } from '@/lib/permissions';
+import {
+  canManageAllUsers,
+  canManageUserRole,
+  canViewUsers,
+  shouldHideSelf,
+} from '@/lib/permissions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,7 +146,11 @@ export default function Users() {
             </DropdownMenuContent>
           </DropdownMenu>
           {canAccess && (
-            <Button size="sm" className="w-full sm:w-auto min-w-[140px]" onClick={handleNavigateNew}>
+            <Button
+              size="sm"
+              className="w-full sm:w-auto min-w-[140px]"
+              onClick={handleNavigateNew}
+            >
               Novo usuário
             </Button>
           )}
@@ -224,7 +233,7 @@ export default function Users() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive"
+              variant="destructive"
               onClick={handleConfirmDelete}
               disabled={deleting}
             >
