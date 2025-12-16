@@ -30,6 +30,7 @@ export default function PostDetail() {
   const can = useCan();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -106,7 +107,6 @@ export default function PostDetail() {
   // Determinar qual data mostrar
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
-  const { toast } = useToast();
 
   const handleBack = () => {
     if (window.history.length > 1) {

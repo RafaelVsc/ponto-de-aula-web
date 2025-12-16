@@ -82,9 +82,12 @@ export default function Dashboard() {
 
   const handleSearch = useCallback(
     async (params: PostSearchParams) => {
-      const { page: _p, limit: _l, ...cleanFilters } = params; // paginação controlada aqui
-      setFilters(cleanFilters);
-      await fetchPage(1, cleanFilters);
+      // Paginação controlada aqui; descartamos page/limit vindos do formulário
+      const { page: _ignoredPage, limit: _ignoredLimit, ...sanitizedFilters } = params;
+      void _ignoredPage;
+      void _ignoredLimit;
+      setFilters(sanitizedFilters);
+      await fetchPage(1, sanitizedFilters);
     },
     [fetchPage],
   );

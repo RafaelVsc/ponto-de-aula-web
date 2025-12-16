@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const profile = await api.get<ApiResponse<User>>('/users/me');
         if (!mounted) return;
         setUser(profile.data);
-      } catch (err) {
+      } catch {
         clearToken();
       } finally {
         if (mounted) setIsInitializing(false);

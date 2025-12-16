@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Filter } from 'lucide-react';
 import { getRoleLabel } from '@/lib/roles';
-import { canManageAllUsers, canManageLimitedUsers, canManageUserRole, canViewUsers, shouldHideSelf } from '@/lib/permissions';
+import { canManageAllUsers, canManageUserRole, canViewUsers, shouldHideSelf } from '@/lib/permissions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +47,6 @@ export default function Users() {
   const navigate = useNavigate();
 
   const canManageAll = canManageAllUsers(currentUser?.role);
-  const canManageLimited = canManageLimitedUsers(currentUser?.role);
   const canAccess = canViewUsers(currentUser?.role);
 
   useEffect(() => {

@@ -64,6 +64,15 @@ export function VlibrasProvider({ children }: { children: React.ReactNode }) {
   });
   const [loading, setLoading] = useState(false);
   const widgetInitialized = useRef(false);
+  const toggleRef = useRef(() => {
+    const next = !enabled;
+    localStorage.setItem(STORAGE_KEY, String(next));
+    if (!next) {
+      removeContainer();
+      removeScript();
+    }
+    window.location.reload();
+  });
 
   useEffect(() => {
     let active = true;
@@ -101,18 +110,14 @@ export function VlibrasProvider({ children }: { children: React.ReactNode }) {
     };
   }, [enabled]);
 
-  const toggle = () => {
-    const next = !enabled;
-    localStorage.setItem(STORAGE_KEY, String(next));
-    if (!next) {
-      removeContainer();
-      removeScript();
-    }
-    // Recarrega para aplicar/retirar o widget de forma consistente
-    window.location.reload();
-  };
-
-  const value = useMemo(() => ({ enabled, loading, toggle }), [enabled, loading]);
+  const value = useMemo(
+    () => ({
+      enabled,
+      loading,
+      toggle: () => toggleRef.current(),
+    }),
+    [enabled, loading],
+  );
 
   return <VlibrasContext.Provider value={value}>{children}</VlibrasContext.Provider>;
 }
