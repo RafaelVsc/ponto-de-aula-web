@@ -1,29 +1,18 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCan } from '@/hooks/useCan';
 import { getYouTubeEmbedUrl } from '@/lib/normalizeVideoUrl';
 import { deletePostById, fetchPostById } from '@/services/post.service';
 import type { Post } from '@/types';
-import { ArrowLeft, Info } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import defaultPostImage from '@/assets/login-bg.png';
 import { getErrorMessage } from '@/lib/errors';
 import { useAuth } from '@/hooks/useAuth';
 import { sanitizeHtml } from '@/lib/sanitize';
 import { useToast } from '@/components/ui/ToastProvider';
+import { PostMeta } from '@/components/posts/PostMeta';
+import { PostMedia } from '@/components/posts/PostMedia';
+import { PostDetailActions } from '@/components/posts/PostDetailActions';
 
 export default function PostDetail() {
   const { user } = useAuth();
@@ -98,14 +87,11 @@ export default function PostDetail() {
   const isOwner = post?.authorId === user?.id;
   const canUpdate = (can?.('update', 'Post', post) ?? false) && isOwner;
   const canDelete = can?.('delete', 'Post', post) ?? false;
-  const hasActions = canUpdate || canDelete;
-
   const videoUrl = post.videoUrl;
-
   const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
 
   // Determinar qual data mostrar
-  const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
+  const wasUpdated = Boolean(post.updatedAt && post.updatedAt !== post.createdAt);
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
 
   const handleBack = () => {
@@ -142,14 +128,7 @@ export default function PostDetail() {
       </button>
 
       <Card className="mx-auto max-w-4xl overflow-hidden p-0">
-        <div className="h-48 w-full bg-gray-100 sm:h-64 md:h-96">
-          <img
-            src={post.imageUrl || defaultPostImage}
-            alt={post.title ?? 'Imagem do post'}
-            className="h-full w-full object-cover"
-            loading="lazy"
-          />
-        </div>
+        <PostMedia title={post.title} imageUrl={post.imageUrl} showVideo={false} />
 
         <div className="p-4 sm:p-6 md:p-8">
           <h1 className="mb-3 text-2xl font-bold sm:mb-4 sm:text-3xl md:text-4xl">
@@ -167,106 +146,18 @@ export default function PostDetail() {
               ))}
             </div>
           )}
-          <div className="mb-6 flex flex-wrap items-center gap-2 border-b pb-4 text-sm text-muted-foreground sm:gap-4 sm:pb-6">
-            <span>{post.author ?? 'Autor desconhecido'}</span>
-            <span>•</span>
-
-            {wasUpdated ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="group inline-flex cursor-help items-center gap-1.5">
-                    <time dateTime={displayDate}>
-                      atualizado em{' '}
-                      {new Date(displayDate!).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </time>
-                    <Info className="h-3.5 w-3.5 opacity-50 transition-opacity group-hover:opacity-100" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="text-xs">
-                    Publicado em{' '}
-                    {new Date(post.createdAt!).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <time dateTime={displayDate}>
-                {displayDate
-                  ? new Date(displayDate).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  : ''}
-              </time>
-            )}
-          </div>
+          <PostMeta post={post} wasUpdated={wasUpdated} displayDate={displayDate} />
           <div
             className="post-content"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
           />
-          {embedUrl && (
-            <div className="mt-6 sm:mt-8">
-              <h2 className="mb-4 text-xl font-semibold">Vídeo complementar</h2>
-              <div className="aspect-video overflow-hidden rounded-lg bg-gray-100">
-                <iframe
-                  src={embedUrl}
-                  title="Vídeo do post"
-                  className="h-full w-full"
-                  loading="lazy"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-          )}
-          {/* Botões de ação para quem pode editar/deletar */}
-          {hasActions && (
-            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
-              {canUpdate && (
-                <Button
-                  size="sm"
-                  className="w-full sm:w-auto"
-                  onClick={() => navigate(`/posts/edit/${post.id}`)}
-                >
-                  Editar
-                </Button>
-              )}
-
-              {canDelete && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="w-full sm:w-auto"
-                      variant="destructive"
-                    >
-                      Deletar
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar deleção</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja deletar este post? Esta ação não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDelete}>Deletar</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </div>
-          )}
+          <PostMedia title={post.title} embedUrl={embedUrl} showImage={false} />
+          <PostDetailActions
+            canUpdate={canUpdate}
+            canDelete={canDelete}
+            onEdit={() => navigate(`/posts/edit/${post.id}`)}
+            onDelete={handleDelete}
+          />
         </div>
       </Card>
     </div>
