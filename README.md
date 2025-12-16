@@ -103,6 +103,14 @@ A aplicação estará disponível em `http://localhost:5173` (ou outra porta ind
 - Usamos **ReactQuill New**; o conteúdo é salvo como HTML e renderizado com **DOMPurify** para evitar XSS.
 - No card de listagem é mostrado apenas o preview em texto simples; na página de detalhe o HTML sanitizado é exibido com estilos para títulos, listas e citações.
 
+## Acessibilidade
+- Toggle do **VLibras** fixo no rodapé: clique para ligar/desligar. Ao ativar ou desativar, a página é recarregada para aplicar/retirar o widget.
+- Modo claro/escuro via switch no header.
+
+## Backend
+- Este frontend integra com o backend disponível em: https://github.com/RafaelVsc/ponto-de-aula-api
+- Configure `VITE_API_URL` no `.env` apontando para a URL da API e rode o backend com JWT habilitado (rotas `/users/me`, etc.).
+
 ## Notas rápidas
 - Backend precisa estar rodando e expor `/users/me` e demais endpoints com JWT (Authorization: Bearer).
 - Use `npm run lint` antes de PRs para manter o padrão de código.
