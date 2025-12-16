@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Loader2 } from 'lucide-react';
@@ -10,13 +10,38 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/ToastProvider';
 import { PasswordInput } from '@/components/ui/password-input';
 import { getErrorMessage } from '@/lib/errors';
+import loginBg from '@/assets/login-bg.png';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [parallaxOffset, setParallaxOffset] = useState({ x: 0, y: 0 });
+  const parallaxFrame = useRef<number | null>(null);
   const { login, isAuthenticating, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleParallax = (event: React.MouseEvent<HTMLElement>) => {
+    const { innerWidth, innerHeight } = window;
+    const targetX = ((event.clientX - innerWidth / 2) / innerWidth) * 18;
+    const targetY = ((event.clientY - innerHeight / 2) / innerHeight) * 12;
+
+    if (parallaxFrame.current) {
+      cancelAnimationFrame(parallaxFrame.current);
+    }
+
+    // Suaviza as atualizações para evitar re-render a cada pixel do mouse
+    parallaxFrame.current = requestAnimationFrame(() => {
+      setParallaxOffset({ x: targetX, y: targetY });
+    });
+  };
+
+  const resetParallax = () => {
+    if (parallaxFrame.current) {
+      cancelAnimationFrame(parallaxFrame.current);
+    }
+    setParallaxOffset({ x: 0, y: 0 });
+  };
 
   // Redireciona se já estiver logado
   useEffect(() => {
@@ -24,6 +49,15 @@ export default function Login() {
       navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
+
+  useEffect(
+    () => () => {
+      if (parallaxFrame.current) {
+        cancelAnimationFrame(parallaxFrame.current);
+      }
+    },
+    [],
+  );
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -45,8 +79,23 @@ export default function Login() {
   };
 
   return (
-    <section className="flex min-h-screen items-center justify-center bg-gradient-to-br from-secondary to-muted px-4">
-      <Card className="w-full max-w-md space-y-6 rounded-2xl border-border/40 bg-card/90 p-8 shadow-lg backdrop-blur">
+    <section
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4"
+      onMouseMove={handleParallax}
+      onMouseLeave={resetParallax}
+    >
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out will-change-transform"
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(17, 24, 39, 0.55), rgba(30, 58, 138, 0.35)), url(${loginBg})`,
+            transform: `translate3d(${parallaxOffset.x}px, ${parallaxOffset.y}px, 0) scale(1.08)`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/70 to-background/90 backdrop-blur-[2px]" />
+      </div>
+
+      <Card className="relative z-10 w-full max-w-md space-y-6 rounded-2xl border-border/40 bg-card/90 p-8 shadow-2xl backdrop-blur">
         <header className="space-y-2 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <span className="text-3xl">🎓</span>
@@ -82,17 +131,6 @@ export default function Login() {
               required
             />
 
-            {/* <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              minLength={8}
-              required
-              disabled={isAuthenticating}
-            /> */}
           </div>
 
           <Button type="submit" className="w-full" disabled={isAuthenticating}>
