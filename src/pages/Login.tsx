@@ -35,7 +35,6 @@ export default function Login() {
       });
       navigate('/dashboard', { replace: true });
     } catch (error) {
-      console.error('Erro no login:', error);
       toast({
         title: 'Erro ao entrar',
         description: error instanceof Error ? error.message : 'Credenciais inválidas',

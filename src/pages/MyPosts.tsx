@@ -115,7 +115,7 @@ export default function MyPosts() {
           <h1 className="text-2xl font-bold">Meus Posts</h1>
           <p className="text-muted-foreground">Gerencie seus conteúdos</p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2 w-full sm:w-auto">
           <ViewModeToggle value={viewMode} onChange={changeView} className="w-full sm:w-auto" />
           <NewPostButton size="sm" className="w-full min-w-[140px] sm:w-auto" />
         </div>

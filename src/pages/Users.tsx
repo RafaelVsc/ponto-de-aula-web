@@ -144,7 +144,7 @@ export default function Users() {
             </DropdownMenuContent>
           </DropdownMenu>
           {canAccess && (
-            <Button size="sm" className="w-full sm:w-auto min-w-[120px]" onClick={handleNavigateNew}>
+            <Button size="sm" className="w-full sm:w-auto min-w-[140px]" onClick={handleNavigateNew}>
               Novo usuário
             </Button>
           )}

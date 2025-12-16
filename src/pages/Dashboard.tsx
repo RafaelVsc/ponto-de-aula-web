@@ -69,7 +69,7 @@ export default function Dashboard() {
         if (!mounted) return;
         setFilterOptionsPosts(resp.data ?? []);
       } catch (err) {
-        console.error('Erro ao carregar opções de filtros', err);
+        setError(getErrorMessage(err, 'Erro ao carregar filtros'));
       }
     })();
 

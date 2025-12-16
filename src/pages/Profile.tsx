@@ -80,21 +80,32 @@ export default function Profile() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Meus dados</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Meus dados</h1>
+          <p className="text-muted-foreground">Veja e atualize suas informações pessoais</p>
+        </div>
+        {!editMode && (
+          <Button
+            size="sm"
+            className="w-full sm:w-auto min-w-[140px]"
+            onClick={() => setEditMode(true)}
+          >
+            Editar dados
+          </Button>
+        )}
+      </div>
 
       <Card className="p-6 space-y-4">
         {!editMode && (
-          <>
-            <div className="space-y-1">
-              <p>
-                <strong>Nome:</strong> {user.name}
-              </p>
-              <p>
-                <strong>E-mail:</strong> {user.email}
-              </p>
-            </div>
-            <Button onClick={() => setEditMode(true)}>Editar dados</Button>
-          </>
+          <div className="space-y-1 text-sm">
+            <p>
+              <strong>Nome:</strong> {user.name}
+            </p>
+            <p>
+              <strong>E-mail:</strong> {user.email}
+            </p>
+          </div>
         )}
 
         {editMode && (
@@ -139,7 +150,10 @@ export default function Profile() {
 
       <Card className="p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Alterar senha</h2>
+          <div>
+            <h2 className="text-lg font-semibold">Alterar senha</h2>
+            <p className="text-xs text-muted-foreground">Opcional, mantenha sua conta segura.</p>
+          </div>
           <Button variant="outline" size="sm" onClick={() => setShowChangePwd(prev => !prev)}>
             {showChangePwd ? 'Fechar' : 'Abrir'}
           </Button>

@@ -26,7 +26,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
         setUser(profile.data);
       } catch (err) {
-        console.error('Erro ao carregar perfil:', err);
         clearToken();
       } finally {
         if (mounted) setIsInitializing(false);
