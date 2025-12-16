@@ -9,7 +9,7 @@ import { useViewMode } from '@/hooks/useViewMode';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchPosts, searchPosts } from '@/services/post.service';
 import type { Post, PostSearchParams } from '@/types';
-import { Button } from '@/components/ui/button';
+import { Pagination } from '@/components/ui/pagination';
 
 const PAGE_SIZE = 9;
 const VIEW_MODE_KEY = 'pda:viewMode:dashboard';
@@ -133,22 +133,13 @@ export default function Dashboard() {
           <PostTable posts={posts} loading={loading} error={error} emptyMessage={emptyMessage} />
         )}
 
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-sm text-muted-foreground">Página {page}</div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={page === 1 || loading}>
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNextPage}
-              disabled={!hasNextPage || loading}
-            >
-              Próxima
-            </Button>
-          </div>
-        </div>
+        <Pagination
+          page={page}
+          hasNext={hasNextPage}
+          loading={loading}
+          onPrev={handlePrevPage}
+          onNext={handleNextPage}
+        />
       </div>
     </div>
   );

@@ -15,19 +15,24 @@ import {
 import { useToast } from '@/components/ui/ToastProvider';
 import { useViewMode } from '@/hooks/useViewMode';
 import { getErrorMessage } from '@/lib/errors';
+import { Pagination } from '@/components/ui/pagination';
 import { deletePostById, fetchMyPosts } from '@/services/post.service';
 import type { Post } from '@/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const VIEW_MODE_KEY = 'pda:viewMode:mine';
+const PAGE_SIZE = 9;
 
 export default function MyPosts() {
   const { viewMode, changeView } = useViewMode(VIEW_MODE_KEY, 'grid');
 
   const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [deletePost, setDeletePost] = useState<Post | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -37,22 +42,32 @@ export default function MyPosts() {
     [],
   );
 
-  const loadPosts = async () => {
+  const paginate = useCallback((list: Post[], targetPage: number) => {
+    const start = (targetPage - 1) * PAGE_SIZE;
+    const pageItems = list.slice(start, start + PAGE_SIZE);
+    setPosts(pageItems);
+    setPage(targetPage);
+    setHasNextPage(start + PAGE_SIZE < list.length);
+  }, []);
+
+  const loadPosts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const resp = await fetchMyPosts();
-      setPosts(resp.data ?? []);
+      const items = resp.data ?? [];
+      setAllPosts(items);
+      paginate(items, 1);
     } catch (error: unknown) {
       setError(getErrorMessage(error, 'Erro ao carregar seus posts'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [paginate]);
 
   useEffect(() => {
     loadPosts();
-  }, []);
+  }, [loadPosts]);
 
   const handleEdit = (post: Post) => {
     navigate(`/posts/edit/${post.id}`);
@@ -63,7 +78,13 @@ export default function MyPosts() {
 
     try {
       await deletePostById(deletePost.id);
-      setPosts(prev => prev.filter(p => p.id !== deletePost.id));
+      setAllPosts(prevAll => {
+        const updated = prevAll.filter(p => p.id !== deletePost.id);
+        const totalPages = Math.max(1, Math.ceil(updated.length / PAGE_SIZE));
+        const nextPage = Math.min(page, totalPages);
+        paginate(updated, nextPage);
+        return updated;
+      });
       toast({
         title: 'Post excluído',
         description: 'O post foi removido com sucesso.',
@@ -80,6 +101,16 @@ export default function MyPosts() {
     } finally {
       setDeletePost(null);
     }
+  };
+
+  const handlePrevPage = async () => {
+    if (page === 1) return;
+    paginate(allPosts, page - 1);
+  };
+
+  const handleNextPage = async () => {
+    if (!hasNextPage) return;
+    paginate(allPosts, page + 1);
   };
 
   const list = (
@@ -122,6 +153,14 @@ export default function MyPosts() {
       </div>
 
       {list}
+
+      <Pagination
+        page={page}
+        hasNext={hasNextPage}
+        loading={loading}
+        onPrev={handlePrevPage}
+        onNext={handleNextPage}
+      />
 
       <AlertDialog open={!!deletePost} onOpenChange={() => setDeletePost(null)}>
         <AlertDialogContent>
