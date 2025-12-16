@@ -31,8 +31,11 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     const requestUrl = error?.config?.url ?? '';
 
-    // Não desloga ao errar a senha atual; demais 401 forçam logout
-    if (status === 401 && !requestUrl.includes('/users/me/password')) {
+    const isPasswordChange = requestUrl.includes('/users/me/password');
+    const isLogin = requestUrl.includes('/auth/login');
+
+    // Não desloga ao errar a senha atual ou login; demais 401 forçam logout
+    if (status === 401 && !isPasswordChange && !isLogin) {
       localStorage.removeItem('pda:token');
       window.dispatchEvent(new Event('auth:logout'));
     }

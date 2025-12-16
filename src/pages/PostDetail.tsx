@@ -23,6 +23,7 @@ import defaultPostImage from '@/assets/login-bg.png';
 import { getErrorMessage } from '@/lib/errors';
 import { useAuth } from '@/hooks/useAuth';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { useToast } from '@/components/ui/ToastProvider';
 
 export default function PostDetail() {
   const { user } = useAuth();
@@ -105,6 +106,7 @@ export default function PostDetail() {
   // Determinar qual data mostrar
   const wasUpdated = post.updatedAt && post.updatedAt !== post.createdAt;
   const displayDate = wasUpdated ? post.updatedAt : post.createdAt;
+  const { toast } = useToast();
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -120,11 +122,11 @@ export default function PostDetail() {
       await deletePostById(post.id);
       navigate('/');
     } catch (error: unknown) {
-      let message = 'Erro desconhecido';
-      if (error instanceof Error) {
-        message = error.message;
-      }
-      alert('Erro ao deletar post: ' + message);
+      toast({
+        title: 'Erro ao deletar post',
+        description: getErrorMessage(error, 'Não foi possível excluir o post.'),
+        variant: 'destructive',
+      });
     }
   }
 
@@ -231,7 +233,7 @@ export default function PostDetail() {
               {canUpdate && (
                 <Button
                   size="sm"
-                  className="w-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto"
+                  className="w-full sm:w-auto"
                   onClick={() => navigate(`/posts/edit/${post.id}`)}
                 >
                   Editar
@@ -243,7 +245,8 @@ export default function PostDetail() {
                   <AlertDialogTrigger asChild>
                     <Button
                       size="sm"
-                      className="w-full bg-red-600 text-white hover:bg-red-700 sm:w-auto"
+                      className="w-full sm:w-auto"
+                      variant="destructive"
                     >
                       Deletar
                     </Button>

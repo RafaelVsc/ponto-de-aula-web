@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Filter } from 'lucide-react';
 import { getRoleLabel } from '@/lib/roles';
+import { canManageAllUsers, canManageLimitedUsers, canManageUserRole, canViewUsers, shouldHideSelf } from '@/lib/permissions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,9 +46,9 @@ export default function Users() {
   const { user: currentUser } = useAuth();
   const navigate = useNavigate();
 
-  const canManageAll = currentUser?.role === 'ADMIN';
-  const canManageLimited = currentUser?.role === 'SECRETARY';
-  const canAccess = canManageAll || canManageLimited;
+  const canManageAll = canManageAllUsers(currentUser?.role);
+  const canManageLimited = canManageLimitedUsers(currentUser?.role);
+  const canAccess = canViewUsers(currentUser?.role);
 
   useEffect(() => {
     (async () => {
@@ -66,12 +67,9 @@ export default function Users() {
     })();
   }, [canAccess]);
 
-  const canManageRole = (role: User['role']) =>
-    canManageAll || (canManageLimited && (role === 'TEACHER' || role === 'STUDENT'));
-
   const filteredUsers = users.filter(u => {
-    if (u.id === currentUser?.id) return false; // não renderiza a linha do usuário logado
-    if (!canManageRole(u.role)) return false;
+    if (shouldHideSelf(currentUser, u)) return false; // não renderiza a linha do usuário logado
+    if (!canManageUserRole(currentUser?.role, u.role)) return false;
     if (roleFilter !== 'ALL' && u.role !== roleFilter) return false;
     return true;
   });
@@ -185,7 +183,7 @@ export default function Users() {
                     <TableCell>
                       {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('pt-BR') : '—'}
                     </TableCell>
-                    {canManageRole(u.role) && (
+                    {canManageUserRole(currentUser?.role, u.role) && (
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

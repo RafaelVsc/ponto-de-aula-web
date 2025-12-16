@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/ToastProvider';
 import { PasswordInput } from '@/components/ui/password-input';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -37,7 +38,7 @@ export default function Login() {
     } catch (error) {
       toast({
         title: 'Erro ao entrar',
-        description: error instanceof Error ? error.message : 'Credenciais inválidas',
+        description: getErrorMessage(error, 'Credenciais inválidas'),
         variant: 'destructive',
       });
     }
