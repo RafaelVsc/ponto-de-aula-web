@@ -28,10 +28,10 @@ O frontend segue uma separação por responsabilidades (páginas → componentes
 O diagrama abaixo mostra a interação básica entre os componentes do sistema.
 
 ```mermaid
-graph TD
-    A[Usuário] --> B{Frontend (React)};
-    B --> C{Backend (Node.js)};
-    C --> D[(Banco de Dados)];
+graph LR
+    User[Usuário] --> FE[Frontend • React]
+    FE --> API[API • Node.js]
+    API --> DB[(Database)]
 ```
 
 ### Diagrama de Dados (DTOs Consumidos no Frontend)
