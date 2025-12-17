@@ -70,7 +70,9 @@ export function Header() {
 
         <div className="flex items-center justify-between gap-3 sm:justify-end">
           <div className="flex flex-1 items-center gap-2 sm:hidden">
-            <span className="truncate text-xs text-muted-foreground">Olá, {user?.name}</span>
+            <span className="truncate text-xs text-muted-foreground" title={user?.name}>
+              Olá, {user?.name}
+            </span>
           </div>
           <Button
             variant="outline"
@@ -83,7 +85,9 @@ export function Header() {
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <div className="hidden flex-col text-right leading-tight sm:flex">
-            <span className="text-sm">Olá, {user?.name}</span>
+            <span className="text-sm max-w-[180px] truncate" title={user?.name}>
+              Olá, {user?.name}
+            </span>
             {/* <span className="text-xs text-muted-foreground">{user?.role}</span> */}
           </div>
           <ModeToggle />

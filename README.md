@@ -16,6 +16,14 @@ Este é o repositório do frontend para a aplicação Ponto de Aula, uma platafo
 -   **Edição de Perfil:** Permite que os usuários atualizem suas próprias informações.
 -   **Filtros e visualização:** Busca por título/conteúdo, tags e autores; alternância entre grid e tabela.
 
+## Guia de Uso Básico
+
+1.  **Login:** Acesse a página inicial e utilize suas credenciais para fazer login. Usuários não autenticados só podem visualizar os posts.
+2.  **Visualizar Posts:** Navegue pelo Dashboard para ver todos os posts. Utilize o campo de busca para filtrar por palavras-chave.
+3.  **Criar um Post (Professores/Admins):** No menu de navegação, acesse "Novo Post". Preencha o título e o conteúdo utilizando o editor de texto e salve.
+4.  **Editar um Post:** Navegue até "Meus Posts" ou encontre seu post no dashboard. Clique no ícone de edição, faça as alterações e salve.
+5.  **Gerenciar Usuários (Admins/Secretaria):** Acesse a área "Usuários" para visualizar, criar, editar ou remover contas de usuário, de acordo com seu nível de permissão.
+
 ## Tecnologias Utilizadas (Tech Stack)
 
 -   **Framework:** [React](https://react.dev/)
@@ -29,6 +37,20 @@ Este é o repositório do frontend para a aplicação Ponto de Aula, uma platafo
 -   **Validação de Esquemas:** [Zod](https://zod.dev/)
 -   **Editor de Texto:** [ReactQuill New](https://www.npmjs.com/package/react-quill-new)
 -   **Segurança (HTML Sanitizer):** [DOMPurify](https://github.com/cure53/DOMPurify)
+
+## Arquitetura do Projeto
+
+A estrutura de pastas do projeto foi organizada para promover a separação de responsabilidades (Separation of Concerns), escalabilidade e manutenibilidade.
+
+A pasta `src` é dividida da seguinte forma:
+
+-   `components/`: Contém componentes de UI reutilizáveis (ex: `Button`, `Input`, `Header`, `Footer`). Eles são divididos em subpastas como `ui/` para componentes genéricos e `posts/` para componentes específicos de posts.
+-   `pages/`: Representa as páginas principais da aplicação, que são associadas às rotas. Cada página é responsável por compor vários componentes e gerenciar o estado daquela visão específica (ex: `LoginPage`, `DashboardPage`, `PostDetailPage`).
+-   `context/`: Armazena os contextos da Context API do React. O `AuthContext`, por exemplo, é responsável por gerenciar o estado de autenticação do usuário e compartilhá-lo com toda a aplicação.
+-   `hooks/`: Contém hooks customizados que encapsulam lógicas reutilizáveis (ex: um hook para interagir com a API, `useApi`).
+-   `services/`: Camada responsável pela comunicação com a API externa. Encapsula a lógica do Axios, configuração de headers e os endpoints da API.
+-   `lib/`: Funções utilitárias genéricas que podem ser usadas em qualquer parte do projeto (ex: formatação de datas).
+-   `types/`: Definições de tipos e interfaces do TypeScript, garantindo a consistência dos dados em toda a aplicação.
 
 ## Guia de Instalação e Execução
 
