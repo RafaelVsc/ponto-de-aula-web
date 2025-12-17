@@ -37,16 +37,16 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/posts/:id"
-                  element={
-                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
-                      <Layout>
-                        <PostDetail />
-                      </Layout>
-                    </ProtectedRoute>
-                  }
-                />
+              <Route
+                path="/posts/:id"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <PostDetail />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
                 <Route
                   path="/posts/mine"
                   element={
