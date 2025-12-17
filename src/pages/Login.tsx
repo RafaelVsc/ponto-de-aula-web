@@ -130,7 +130,6 @@ export default function Login() {
               minLength={8}
               required
             />
-
           </div>
 
           <Button type="submit" className="w-full" disabled={isAuthenticating}>
@@ -153,13 +152,16 @@ export default function Login() {
           <p className="mb-2 text-xs text-muted-foreground">Credenciais de teste:</p>
           <div className="space-y-1 text-xs text-muted-foreground">
             <p>
-              <strong>Admin:</strong> admin@pontodeaula.com / admin@2025 - 12345678
+              <strong>Admin:</strong> admin@pontodeaula.com / admin2025 - 12345678
             </p>
             <p>
-              <strong>Professor:</strong> teacher@pontodeaula.com / teacher@2025 - 12345678
+              <strong>Secretaria:</strong> secretaria@pontodeaula.com.br / secretary2025 - 12345678
             </p>
             <p>
-              <strong>Aluno:</strong> student@pontodeaula.com / student@2025 - 12345678
+              <strong>Professor:</strong> teacher@pontodeaula.com / teacher2025 - 12345678
+            </p>
+            <p>
+              <strong>Aluno:</strong> student@pontodeaula.com / student2025 - 12345678
             </p>
           </div>
         </div>
