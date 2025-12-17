@@ -1,12 +1,27 @@
 # Arquitetura, Desafios e Experiências do Projeto
 
-Este documento detalha a arquitetura do sistema, as decisões de implementação e os desafios encontrados durante o desenvolvimento do frontend da aplicação de blogging.
+Este documento detalha a arquitetura do sistema, as decisões de implementação e os desafios encontrados durante o desenvolvimento do frontend da aplicação **Ponto de Aula** (blog educacional).
 
 ---
 
 ## 1. Arquitetura do Sistema
 
-A aplicação é dividida em duas partes principais: o **Frontend**, desenvolvido em React, que é responsável pela interface do usuário, e o **Backend**, uma API em Node.js que gerencia os dados e a lógica de negócio.
+A aplicação é dividida em duas partes principais:
+
+- **Frontend**: React + Vite + TypeScript, com UI em Tailwind + shadcn/ui.
+- **Backend**: API em Node.js/Express (com JWT, RBAC e persistência em banco de dados).
+
+O frontend segue uma separação por responsabilidades (páginas → componentes → serviços → utilitários), com camadas claras para integração com a API e controle de permissões.
+
+### Estrutura de Pastas (Frontend)
+
+- `src/pages`: telas/rotas (ex.: `Dashboard`, `MyPosts`, `Users`, `Profile`, `PostDetail`).
+- `src/components`: componentes compartilhados (`Layout`, `Header`, `Footer`) e feature components (ex.: `components/posts/*`).
+- `src/services`: camada de integração com a API (ex.: `post.service.ts`, `user.service.ts`).
+- `src/context`: providers de estado global (ex.: autenticação e VLibras).
+- `src/hooks`: hooks reutilizáveis (ex.: permissões, paginação, modo de visualização).
+- `src/lib`: utilitários (ex.: axios instance, extração de erros, sanitização HTML, policies/RBAC).
+- `src/types`: tipos TypeScript compartilhados (DTOs consumidos pela UI).
 
 ### Diagrama de Alto Nível
 
@@ -19,31 +34,37 @@ graph TD
     C --> D[(Banco de Dados)];
 ```
 
-### Diagrama de Classes do Domínio
+### Diagrama de Dados (DTOs Consumidos no Frontend)
 
-Para entender os dados que o frontend manipula, o seguinte diagrama de classes é fundamental. Ele ilustra a estrutura das entidades `User` e `Post` que são consumidas da API.
+Para entender os dados que o frontend manipula, o seguinte diagrama ilustra a estrutura dos principais DTOs consumidos das respostas da API.
+
+Observação: dados sensíveis como `password` **não** são retornados pela API para o frontend.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class User {
+    class UserOutputDTO {
         +string id
         +string name
         +string email
         +string username
-        +string password
         +UserRole role
+        +string registeredAt
+        +string updatedAt
     }
 
     class Post {
         +string id
         +string title
         +string content
+        +string author
         +string authorId
         +string videoUrl
         +string imageUrl
         +string[] tags
+        +string createdAt
+        +string updatedAt
     }
 
     class UserRole {
@@ -54,15 +75,23 @@ classDiagram
         ADMIN
     }
 
-    User "1" -- "0..*" Post : "é autor de"
-    User -- UserRole
+    UserOutputDTO "1" -- "0..*" Post : "é autor de"
+    UserOutputDTO -- UserRole
 ```
 
 ---
 
 ## 2. Integração com a API
 
-A comunicação entre o frontend e o backend é feita através de uma API REST. Um dos fluxos mais importantes é a autenticação do usuário, detalhada abaixo.
+A comunicação entre o frontend e o backend é feita através de uma API REST.
+
+No frontend, as chamadas HTTP são centralizadas em uma instância do `axios` (`src/lib/api.ts`) e consumidas por serviços em `src/services/*`.
+
+Pontos importantes da integração:
+
+- **Autenticação**: token JWT no header `Authorization: Bearer <token>`.
+- **Normalização de resposta**: o padrão da API é `ApiResponse<T> = { data: T }`.
+- **Tratamento de erros**: utilitários em `src/lib/errors.ts` extraem mensagens (incluindo erros de validação com `details`).
 
 ### Diagrama de Sequência - Fluxo de Login
 
@@ -77,13 +106,13 @@ sequenceDiagram
     participant Hasher as Serviço de Hash
     participant TokenSvc as Serviço de Token
 
-    Client->>LoginController: POST /auth/login (email, password)
+    Client->>LoginController: POST /auth/login (email|username, password)
     activate LoginController
 
-    LoginController->>LoginUseCase: execute({ email, password })
+    LoginController->>LoginUseCase: execute({ identifier, password })
     activate LoginUseCase
 
-    LoginUseCase->>UserRepo: findByEmail(email)
+    LoginUseCase->>UserRepo: findByEmailOrUsername(identifier)
     activate UserRepo
     UserRepo-->>LoginUseCase: Retorna o objeto User
     deactivate UserRepo
@@ -113,24 +142,54 @@ sequenceDiagram
 
 ## 3. Relato de Experiências e Desafios
 
-*(Esta seção é um template para você preencher)*
-
 Durante o desenvolvimento do projeto, enfrentamos alguns desafios e tomamos decisões importantes que moldaram o resultado final.
 
-### Desafio 1: Proteção de Rotas (Rotas Administrativas)
+### Desafio 1: Proteção de Rotas e Autorização
 
-**Problema:** Precisávamos garantir que apenas usuários autenticados com a permissão de "professor" pudessem acessar as páginas de criação e edição de posts.
+**Problema:** Era necessário proteger rotas e ações de acordo com autenticação e perfis (roles), garantindo:
 
-**Solução:** Implementamos um componente de ordem superior (Higher-Order Component) chamado `ProtectedRoute`. Este componente utiliza a Context API do React para acessar o estado de autenticação do usuário. Antes de renderizar a página solicitada, ele verifica se o usuário está logado e qual é sua role. Caso o usuário não atenda aos critérios, ele é automaticamente redirecionado para a página de login.
+- Qualquer usuário autenticado pode **ler** posts (incluindo a página de detalhe).
+- Apenas `ADMIN`, `SECRETARY` e `TEACHER` podem acessar telas de **gestão de posts** (criar/editar e “Meus posts”).
+- Apenas `ADMIN` e `SECRETARY` podem acessar **gestão de usuários**.
 
-### Desafio 2: Gerenciamento de Estado Global
+**Solução:** Criamos o componente `ProtectedRoute` que:
 
-**Problema:** ... *(Descreva outro desafio, como o gerenciamento do estado de autenticação, o carregamento de dados, etc.)*
+- Bloqueia acesso quando não há usuário autenticado (redireciona para o login).
+- Quando há `allowedRoles`, exibe uma tela de “Acesso negado” (sem quebrar a navegação) se o perfil não for permitido.
 
-**Solução:** ... *(Explique como você resolveu o problema, mencionando as tecnologias usadas, como Context API, hooks customizados, etc.)*
+Além disso, para ações dentro de componentes (ex.: mostrar/ocultar botões de editar/excluir), usamos um controle fino via `policies` (`src/lib/policies.ts`) + hook `useCan`.
 
-### Decisões de Arquitetura
+### Desafio 2: Comunicação com a API e Gerenciamento de Estado Assíncrono
 
-**Decisão:** Optamos por usar a Context API em vez de uma biblioteca mais complexa como Redux.
+**Problema:** A aplicação depende inteiramente de dados vindos de uma API externa. Era preciso criar uma forma organizada e reutilizável de fazer requisições (GET, POST, PUT, DELETE), além de gerenciar os diferentes estados da interface durante essas chamadas (carregando, sucesso, erro).
 
-**Justificativa:** Para o escopo deste projeto, o gerenciamento de estado se resumia principalmente ao status de autenticação do usuário. A Context API é uma ferramenta nativa do React, mais simples de configurar e suficiente para nossas necessidades, evitando a complexidade e o boilerplate adicionais que o Redux introduziria.
+**Solução:** Centralizamos a comunicação com a API em uma camada de serviço (`src/services`) e uma instância do `axios` (`src/lib/api.ts`) com interceptors para:
+
+- anexar o token JWT automaticamente nas requisições autenticadas;
+- padronizar o consumo do `ApiResponse<T>`;
+- ajudar no tratamento de `401` (sem causar efeitos colaterais indevidos em fluxos como “trocar senha”).
+
+Na UI, mantivemos um padrão consistente: `loading`, `error`, `emptyMessage` e toasts para feedback ao usuário.
+
+### Desafio 3: Gerenciamento de Estado Global vs. Local
+
+**Problema:** Em uma aplicação React, é preciso decidir quais informações devem ser globais (acessíveis por toda a aplicação) e quais devem ser locais (restritas a um componente ou página). Uma má decisão poderia levar a uma aplicação lenta e complexa.
+
+**Solução:** Adotamos uma abordagem pragmática:
+
+- Estado global: autenticação (token + usuário), tema (claro/escuro) e VLibras.
+- Estado local: listas, filtros e formulários por tela, com hooks customizados quando há ganho real (ex.: `usePagedPosts` para paginação/filtro no dashboard).
+
+Assim, evitamos a complexidade desnecessária de bibliotecas externas de estado global, mantendo a base simples e sustentável.
+
+### Desafio 4: Conteúdo Rico com Segurança (Rich Text)
+
+**Problema:** O conteúdo do post precisava permitir formatação (títulos, listas, links, etc.), sem abrir brechas para XSS.
+
+**Solução:** Adotamos um editor WYSIWYG (`react-quill-new`) para criação/edição, salvando o conteúdo como HTML. Na leitura, o HTML é **sanitizado** (`DOMPurify`) antes de ser renderizado, garantindo segurança. Para manter os cards enxutos e consistentes, a listagem usa um “preview” em texto puro (strip de HTML).
+
+### Desafio 5: Acessibilidade (VLibras)
+
+**Problema:** Incluir um atalho de acessibilidade para VLibras, permitindo ao usuário ligar/desligar, de forma consistente (incluindo mobile).
+
+**Solução:** Criamos um provider + hook e um toggle fixo no rodapé. A ativação/desativação recarrega a página para garantir inicialização correta do widget.
