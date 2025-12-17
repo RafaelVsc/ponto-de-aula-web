@@ -103,6 +103,9 @@ export default function Profile() {
               <strong>Nome:</strong> {user.name}
             </p>
             <p>
+              <strong>Username:</strong> {user.username ?? '—'}
+            </p>
+            <p>
               <strong>E-mail:</strong> {user.email}
             </p>
           </div>
@@ -118,6 +121,19 @@ export default function Profile() {
                 onChange={e => setDraft({ ...draft, name: e.target.value })}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                value={user.username ?? ''}
+                placeholder="—"
+                readOnly
+                disabled
+              />
+              <p className="text-xs text-muted-foreground">
+                Para alterar o username, entre em contato com um administrador.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
