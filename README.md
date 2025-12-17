@@ -18,7 +18,7 @@ Este é o repositório do frontend para a aplicação Ponto de Aula, uma platafo
 
 ## Guia de Uso Básico
 
-1.  **Login:** Acesse a página inicial e utilize suas credenciais para fazer login. Usuários não autenticados só podem visualizar os posts.
+1.  **Login:** Acesse a página inicial e utilize suas credenciais para fazer login. Usuários não autenticados são redirecionados para a tela de login.
 2.  **Visualizar Posts:** Navegue pelo Dashboard para ver todos os posts. Utilize o campo de busca para filtrar por palavras-chave.
 3.  **Criar um Post (Professores/Admins):** No menu de navegação, acesse "Novo Post". Preencha o título e o conteúdo utilizando o editor de texto e salve.
 4.  **Editar um Post:** Navegue até "Meus Posts" ou encontre seu post no dashboard. Clique no ícone de edição, faça as alterações e salve.
@@ -41,6 +41,10 @@ Este é o repositório do frontend para a aplicação Ponto de Aula, uma platafo
 ## Arquitetura do Projeto
 
 A estrutura de pastas do projeto foi organizada para promover a separação de responsabilidades (Separation of Concerns), escalabilidade e manutenibilidade.
+
+Documentação complementar (arquitetura, desafios e diagramas):
+
+- [Arquitetura, Desafios e Diagramas](docs/ARQUITETURA_E_DESAFIO.md)
 
 A pasta `src` é dividida da seguinte forma:
 

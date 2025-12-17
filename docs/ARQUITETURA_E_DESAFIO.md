@@ -23,6 +23,7 @@ O frontend segue uma separação por responsabilidades (páginas → componentes
 - `src/lib`: utilitários (ex.: axios instance, extração de erros, sanitização HTML, policies/RBAC).
 - `src/types`: tipos TypeScript compartilhados (DTOs consumidos pela UI).
 
+
 ### Diagrama de Alto Nível
 
 O diagrama abaixo mostra a interação básica entre os componentes do sistema.
@@ -136,6 +137,96 @@ sequenceDiagram
 
     LoginController-->>Client: Resposta 200 OK com { token: jwtToken }
     deactivate LoginController
+```
+
+### Diagrama de Sequência - Criação de Post
+
+Este diagrama detalha o passo a passo de como um post é criado, desde a ação do usuário no frontend até a resposta final do backend, incluindo a verificação de autorização.
+
+```mermaid
+sequenceDiagram
+    actor Client as Frontend
+    participant Middleware as Auth Middleware
+    participant Controller as Post Controller
+    participant UseCase as CreatePost Use Case
+    participant Repo as Post Repository
+    participant DB as Banco de Dados
+
+    Client->>Controller: POST /posts (com dados do post e token)
+    activate Controller
+
+    Controller->>Middleware: Verifica token e permissão ('TEACHER' ou superior)
+    activate Middleware
+    alt Token inválido ou sem permissão
+        Middleware-->>Client: Resposta 401/403 Unauthorized
+    end
+    Middleware-->>Controller: Usuário autorizado (com ID do usuário)
+    deactivate Middleware
+
+    Controller->>UseCase: execute({ title, content, authorId: ... })
+    activate UseCase
+
+    UseCase->>Repo: create(postData)
+    activate Repo
+
+    Repo->>DB: INSERT em posts
+    activate DB
+    DB-->>Repo: Retorna post criado
+    deactivate DB
+    
+    Repo-->>UseCase: Retorna post criado
+    deactivate Repo
+
+    UseCase-->>Controller: Retorna post criado
+    deactivate UseCase
+
+    Controller-->>Client: Resposta 201 Created com dados do post
+    deactivate Controller
+```
+
+### Diagrama de Sequência - Edição de Dados do Usuário
+
+Este diagrama detalha o fluxo para um usuário editar seus próprios dados ou senha.
+
+```mermaid
+sequenceDiagram
+    actor Client as Frontend
+    participant Middleware as Auth Middleware
+    participant Controller as User Controller
+    participant UseCase as UpdateUser Use Case
+    participant Repo as User Repository
+    participant DB as Banco de Dados
+
+    Client->>Controller: PATCH /users/me (com dados de usuário e token)
+    activate Controller
+
+    Controller->>Middleware: Verifica token
+    activate Middleware
+    alt Token inválido
+        Middleware-->>Client: Resposta 401 Unauthorized
+    end
+    Middleware-->>Controller: Usuário autenticado (ID do usuário do token)
+    deactivate Middleware
+
+    Controller->>UseCase: execute({ userId: userIdFromToken, updateData })
+    activate UseCase
+
+    UseCase->>Repo: update(userId, updateData)
+    activate Repo
+
+    Repo->>DB: UPDATE em users
+    activate DB
+    DB-->>Repo: Retorna usuário atualizado
+    deactivate DB
+    
+    Repo-->>UseCase: Retorna usuário atualizado
+    deactivate Repo
+
+    UseCase-->>Controller: Retorna usuário atualizado
+    deactivate UseCase
+
+    Controller-->>Client: Resposta 200 OK com usuário atualizado
+    deactivate Controller
 ```
 
 ---
