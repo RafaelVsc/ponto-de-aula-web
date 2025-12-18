@@ -53,6 +53,7 @@ export default function Users() {
 
   const canManageAll = canManageAllUsers(currentUser?.role);
   const canAccess = canViewUsers(currentUser?.role);
+  const showActions = canManageAll;
 
   useEffect(() => {
     (async () => {
@@ -178,7 +179,7 @@ export default function Users() {
                   <TableHead>Username</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Registrado</TableHead>
-                  {canAccess && <TableHead className="w-32 text-right">Ações</TableHead>}
+                  {showActions && <TableHead className="w-32 text-right">Ações</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -191,7 +192,7 @@ export default function Users() {
                     <TableCell>
                       {u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('pt-BR') : '—'}
                     </TableCell>
-                    {canManageUserRole(currentUser?.role, u.role) && (
+                    {showActions && canManageUserRole(currentUser?.role, u.role) && (
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
