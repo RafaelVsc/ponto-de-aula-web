@@ -12,12 +12,15 @@ export function Footer() {
           type="button"
           onClick={toggle}
           disabled={loading}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+          aria-pressed={enabled}
+          className={`inline-flex items-center gap-2 text-sm cursor-pointer transition-colors disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+            enabled ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+          }`}
         >
           <HandHelping
             className={`h-4 w-4 ${enabled ? 'text-primary' : 'text-muted-foreground'}`}
           />
-          <span className={enabled ? 'text-primary' : 'text-muted-foreground'}>
+          <span className={enabled ? 'text-primary' : 'text-foreground'}>
             {loading ? 'Ativando...' : enabled ? 'VLibras está ligado' : 'VLibras está desligado'}
           </span>
         </button>
