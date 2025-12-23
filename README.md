@@ -6,6 +6,18 @@ Este é o repositório do frontend para a aplicação Ponto de Aula, uma platafo
 
 ![Thumbnail do vídeo](https://img.youtube.com/vi/li1Bhy9rZJo/0.jpg)
 
+## Executar com Docker
+
+```bash
+# build da imagem (ajuste a API via build arg se precisar)
+docker build -t ponto-de-aula-frontend --build-arg VITE_API_URL=http://localhost:3000 .
+
+# executar
+docker run -p 4173:4173 ponto-de-aula-frontend
+```
+
+Depois acesse http://localhost:4173.
+
 ## Funcionalidades
 
 -   **Autenticação de Usuários:** Sistema de Login e Logout com tokens JWT.
