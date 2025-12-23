@@ -2,6 +2,10 @@
 
 Este é o repositório do frontend para a aplicação Ponto de Aula, uma plataforma para gerenciamento de posts e conteúdos educacionais. A aplicação é um SPA (Single Page Application) construído com React e Vite.
 
+📺 Vídeo de apresentação: [https://youtu.be/li1Bhy9rZJo](https://youtu.be/li1Bhy9rZJo)
+
+![Thumbnail do vídeo](https://img.youtube.com/vi/li1Bhy9rZJo/0.jpg)
+
 ## Funcionalidades
 
 -   **Autenticação de Usuários:** Sistema de Login e Logout com tokens JWT.
