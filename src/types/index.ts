@@ -11,6 +11,24 @@ export interface User {
   updatedAt?: string;
 }
 
+export type CreateUserPayload = {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  role: Role; // 'ADMIN' | 'SECRETARY' | 'TEACHER' | 'STUDENT'
+};
+
+export type UpdateUserPayload = {
+  name?: string;
+  email?: string;
+};
+
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 // Genérico para respostas no formato { data: T }
 export interface ApiResponse<T> {
   data: T;

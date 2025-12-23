@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useCan } from '@/hooks/useCan';
 import type { Post } from '@/types';
+import { stripHtml } from '@/lib/sanitize';
 import { SquarePlay } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PostActions } from './PostActions';
@@ -48,7 +49,9 @@ export function PostCard({ post, showActions = false, onEdit, onDelete }: PostCa
         </Link>
 
         {/* Conteúdo */}
-        <p className="text-sm text-muted-foreground mt-2 line-clamp-3 flex-1">{post.content}</p>
+        <p className="text-sm text-muted-foreground mt-2 leading-relaxed line-clamp-3 flex-1">
+          {stripHtml(post.content)}
+        </p>
 
         {/* Footer */}
         <div className="mt-4 flex flex-col gap-2">
