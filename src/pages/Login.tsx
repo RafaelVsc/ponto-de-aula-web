@@ -1,47 +1,36 @@
-import { useState, useEffect, useRef } from 'react';
-import type { FormEvent } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/ToastProvider';
 import { PasswordInput } from '@/components/ui/password-input';
 import { getErrorMessage } from '@/lib/errors';
 import loginBg from '@/assets/login-bg.png';
+import { useParallaxBackground } from '@/hooks/useParallaxBackground';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormData } from '@/validation/auth';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 export default function Login() {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [parallaxOffset, setParallaxOffset] = useState({ x: 0, y: 0 });
-  const parallaxFrame = useRef<number | null>(null);
+  const { bgRef, handleParallax, resetParallax } = useParallaxBackground();
   const { login, isAuthenticating, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const handleParallax = (event: React.MouseEvent<HTMLElement>) => {
-    const { innerWidth, innerHeight } = window;
-    const targetX = ((event.clientX - innerWidth / 2) / innerWidth) * 18;
-    const targetY = ((event.clientY - innerHeight / 2) / innerHeight) * 12;
-
-    if (parallaxFrame.current) {
-      cancelAnimationFrame(parallaxFrame.current);
-    }
-
-    // Suaviza as atualizações para evitar re-render a cada pixel do mouse
-    parallaxFrame.current = requestAnimationFrame(() => {
-      setParallaxOffset({ x: targetX, y: targetY });
-    });
-  };
-
-  const resetParallax = () => {
-    if (parallaxFrame.current) {
-      cancelAnimationFrame(parallaxFrame.current);
-    }
-    setParallaxOffset({ x: 0, y: 0 });
-  };
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { identifier: '', password: '' },
+  });
 
   // Redireciona se já estiver logado
   useEffect(() => {
@@ -50,20 +39,9 @@ export default function Login() {
     }
   }, [user, navigate]);
 
-  useEffect(
-    () => () => {
-      if (parallaxFrame.current) {
-        cancelAnimationFrame(parallaxFrame.current);
-      }
-    },
-    [],
-  );
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async (data: LoginFormData) => {
     try {
-      await login(identifier.trim(), password);
+      await login(data.identifier.trim(), data.password);
       toast({
         title: 'Login realizado!',
         description: 'Bem-vindo ao Ponto de Aula',
@@ -86,10 +64,10 @@ export default function Login() {
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div
+          ref={bgRef}
           className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out will-change-transform"
           style={{
             backgroundImage: `linear-gradient(135deg, rgba(17, 24, 39, 0.55), rgba(30, 58, 138, 0.35)), url(${loginBg})`,
-            transform: `translate3d(${parallaxOffset.x}px, ${parallaxOffset.y}px, 0) scale(1.08)`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/70 to-background/90 backdrop-blur-[2px]" />
@@ -105,47 +83,61 @@ export default function Login() {
           <p className="text-sm text-muted-foreground">Use o email institucional ou username</p>
         </header>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="identifier">Email ou usuário</Label>
-            <Input
-              id="identifier"
-              autoComplete="username"
-              value={identifier}
-              onChange={e => setIdentifier(e.target.value)}
-              placeholder="admin@pontodeaula.com"
-              required
-              disabled={isAuthenticating}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="identifier"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email ou usuário</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoComplete="username"
+                      placeholder="admin@pontodeaula.com"
+                      {...field}
+                      disabled={isAuthenticating}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
-            <PasswordInput
-              id="password"
+            <FormField
+              control={form.control}
               name="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              minLength={8}
-              required
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      {...field}
+                      name="password"
+                      autoComplete="current-password"
+                      minLength={8}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <Button type="submit" className="w-full" disabled={isAuthenticating}>
-            {isAuthenticating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Entrando...
-              </>
-            ) : (
-              <>
-                <LogIn className="mr-2 h-4 w-4" />
-                Entrar
-              </>
-            )}
-          </Button>
-        </form>
+            <Button type="submit" className="w-full" disabled={isAuthenticating}>
+              {isAuthenticating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Entrando...
+                </>
+              ) : (
+                <>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Entrar
+                </>
+              )}
+            </Button>
+          </form>
+        </Form>
 
         {/* Credenciais de teste */}
         <div className="border-t pt-4">
