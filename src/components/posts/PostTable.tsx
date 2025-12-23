@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/table';
 import type { Post } from '@/types';
 import { SquarePlay } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from 'react-router-dom';
 import { PostActions } from './PostActions';
 
@@ -82,11 +83,22 @@ export function PostTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-center">
-                  <SquarePlay
-                    className="w-5 h-5 inline-block"
-                    color={post.videoUrl ? '#dc2626' : '#9ca3af'}
-                    strokeWidth={2}
-                  />
+                  {post.videoUrl ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SquarePlay
+                          className="w-5 h-5 inline-block"
+                          color="#dc2626"
+                          strokeWidth={2}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">Conteúdo adicional em vídeo</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <SquarePlay className="w-5 h-5 inline-block" color="#9ca3af" strokeWidth={2} />
+                  )}
                 </TableCell>
                 {showActions && (
                   <TableCell className="text-right">

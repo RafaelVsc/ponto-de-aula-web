@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -13,16 +12,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Save, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-
-const postSchema = z.object({
-  title: z.string().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
-  content: z.string().min(1, 'Conteúdo é obrigatório'),
-  imageUrl: z.url('URL inválida').optional().or(z.literal('')),
-  videoUrl: z.url('URL inválida').optional().or(z.literal('')),
-  tags: z.string().optional(),
-});
-
-export type PostFormData = z.infer<typeof postSchema>;
+import { RichTextEditor } from './RichTextEditor';
+import { postSchema, type PostFormData } from '@/validation/post';
 
 interface PostFormProps {
   defaultValues?: Partial<PostFormData>;
@@ -79,12 +70,14 @@ export function PostForm({
             <FormItem>
               <FormLabel>Conteúdo *</FormLabel>
               <FormControl>
-                <textarea
-                  className="w-full min-h-[200px] p-3 border rounded-md resize-y"
-                  placeholder="Escreva o conteúdo do seu post..."
-                  {...field}
-                  disabled={isLoading}
-                />
+                <div className="prose prose-sm max-w-none">
+                  <RichTextEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Escreva o conteúdo do seu post..."
+                    readOnly={isLoading}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -172,3 +165,5 @@ export function PostForm({
     </Form>
   );
 }
+
+export type { PostFormData };

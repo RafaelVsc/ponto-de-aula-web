@@ -10,28 +10,33 @@ import MyPosts from '@/pages/MyPosts';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PostDetail from './pages/PostDetail';
 import { ThemeProvider } from './components/theme-provider';
+import Profile from './pages/Profile';
+import Users from './pages/Users';
+import UserForm from './pages/UserForm';
+import { VlibrasProvider } from './context/VlibrasProvider';
 
 function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="pda-theme">
-      <AuthProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Rota pública */}
-              <Route path="/" element={<Login />} />
+      <VlibrasProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Rota pública */}
+                <Route path="/" element={<Login />} />
 
-              {/* Rotas protegidas */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Dashboard />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
+                {/* Rotas protegidas */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Dashboard />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
               <Route
                 path="/posts/:id"
                 element={
@@ -42,40 +47,81 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/posts/mine"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <MyPosts />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/posts/new"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <CreatePost />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/posts/edit/:id"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <EditPost />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </BrowserRouter>
-        </ToastProvider>
-      </AuthProvider>
+                <Route
+                  path="/posts/mine"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
+                      <Layout>
+                        <MyPosts />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts/new"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
+                      <Layout>
+                        <CreatePost />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts/edit/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY', 'TEACHER']}>
+                      <Layout>
+                        <EditPost />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <Profile />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/users"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
+                      <Layout>
+                        <Users />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/users/new"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
+                      <Layout>
+                        <UserForm />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/users/edit/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={['ADMIN', 'SECRETARY']}>
+                      <Layout>
+                        <UserForm />
+                      </Layout>
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </BrowserRouter>
+          </ToastProvider>
+        </AuthProvider>
+      </VlibrasProvider>
     </ThemeProvider>
   );
 }

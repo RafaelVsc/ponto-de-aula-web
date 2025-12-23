@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types';
 import { ModeToggle } from './mode-toggle';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 
 type NavItem = {
   to: string;
@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/posts/mine', label: 'Meus Posts', roles: ['ADMIN', 'TEACHER', 'SECRETARY'] },
   { to: '/users', label: 'Usuários', roles: ['ADMIN', 'SECRETARY'] },
-  { to: '/schedule', label: 'Meus Dados', roles: ['ADMIN', 'SECRETARY', 'TEACHER', 'STUDENT'] },
+  { to: '/profile', label: 'Meus Dados', roles: ['ADMIN', 'SECRETARY', 'TEACHER', 'STUDENT'] },
 ];
 
 export function Header() {
@@ -70,7 +70,9 @@ export function Header() {
 
         <div className="flex items-center justify-between gap-3 sm:justify-end">
           <div className="flex flex-1 items-center gap-2 sm:hidden">
-            <span className="truncate text-xs text-muted-foreground">Olá, {user?.name}</span>
+            <span className="truncate text-xs text-muted-foreground" title={user?.name}>
+              Olá, {user?.name}
+            </span>
           </div>
           <Button
             variant="outline"
@@ -83,15 +85,20 @@ export function Header() {
             {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <div className="hidden flex-col text-right leading-tight sm:flex">
-            <span className="text-sm">Olá, {user?.name}</span>
+            <span className="text-sm max-w-[180px] truncate" title={user?.name}>
+              Olá, {user?.name}
+            </span>
             {/* <span className="text-xs text-muted-foreground">{user?.role}</span> */}
           </div>
           <ModeToggle />
-          <Button variant="outline" size="icon" className="sm:hidden" onClick={logout}>
-            ↩
-          </Button>
-          <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={logout}>
-            Sair
+          <Button
+            variant="outline"
+            size="sm"
+            className="inline-flex items-center gap-2"
+            onClick={logout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sair</span>
           </Button>
         </div>
       </div>

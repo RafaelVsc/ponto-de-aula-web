@@ -37,6 +37,9 @@ export function PostSearch({ posts, onSearch, loading, className }: PostSearchPr
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [posts]);
 
+  const selectedAuthorName =
+    availableAuthors.find(author => author.id === selectedAuthorId)?.name ?? '';
+
   const applySearch = (overrides: Partial<PostSearchParams> = {}) => {
     const params: PostSearchParams = {};
 
@@ -124,9 +127,11 @@ export function PostSearch({ posts, onSearch, loading, className }: PostSearchPr
       {/* Filtro de Tags */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" disabled={loading}>
+          <Button variant="outline" disabled={loading} className="justify-start">
             <Filter className="w-4 h-4 mr-2" />
-            Tags
+            <span className="max-w-[14rem] truncate" title={selectedTag || 'Todas as tags'}>
+              {selectedTag ? `Tag: ${selectedTag}` : 'Todas as tags'}
+            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -142,9 +147,14 @@ export function PostSearch({ posts, onSearch, loading, className }: PostSearchPr
       {/* Filtro de Autores */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" disabled={loading}>
+          <Button variant="outline" disabled={loading} className="justify-start">
             <Filter className="w-4 h-4 mr-2" />
-            Autores
+            <span
+              className="max-w-[14rem] truncate"
+              title={selectedAuthorName || 'Todos os autores'}
+            >
+              {selectedAuthorName ? `Autor: ${selectedAuthorName}` : 'Todos os autores'}
+            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
