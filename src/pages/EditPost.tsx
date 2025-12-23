@@ -54,7 +54,7 @@ export default function EditPost() {
         tags: data.tags?.trim()
           ? data.tags
               .split(',')
-              .map(t => t.trim())
+              .map((t: string) => t.trim())
               .filter(t => t.length > 0)
           : [],
       };

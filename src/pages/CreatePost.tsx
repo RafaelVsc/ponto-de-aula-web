@@ -20,7 +20,7 @@ export default function CreatePost() {
       const payload = {
         title: data.title,
         content: data.content,
-        tags: data.tags ? data.tags.split(',').map(t => t.trim()) : undefined,
+        tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()) : undefined,
         imageUrl: data.imageUrl || undefined,
         videoUrl: data.videoUrl || undefined,
       };

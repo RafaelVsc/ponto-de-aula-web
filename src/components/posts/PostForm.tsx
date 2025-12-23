@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -14,20 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Save, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RichTextEditor } from './RichTextEditor';
-import { stripHtml } from '@/lib/sanitize';
-
-const postSchema = z.object({
-  title: z.string().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
-  content: z
-    .string()
-    .min(10, 'Conteúdo é obrigatório')
-    .refine(val => stripHtml(val).trim().length > 0, 'Conteúdo é obrigatório'),
-  imageUrl: z.url('URL inválida').optional().or(z.literal('')),
-  videoUrl: z.url('URL inválida').optional().or(z.literal('')),
-  tags: z.string().optional(),
-});
-
-export type PostFormData = z.infer<typeof postSchema>;
+import { postSchema, type PostFormData } from '@/validation/post';
 
 interface PostFormProps {
   defaultValues?: Partial<PostFormData>;
@@ -179,3 +165,5 @@ export function PostForm({
     </Form>
   );
 }
+
+export type { PostFormData };
